@@ -7,7 +7,7 @@ class Generic {
 
   Generic(this.apiUrl, this.metodoGet);
 
-  Future<void> consumirApiGet() async {
+  Future<List<dynamic>> consumirApiGet() async {
     final cliente = http.Client(); // Inicializa um novo cliente HTTP
     try {
       final resposta = await cliente.get(Uri.parse(apiUrl + "/" + metodoGet));
@@ -15,6 +15,7 @@ class Generic {
       if (resposta.statusCode == 200) {
         final jsonData = json.decode(resposta.body);
         print(jsonData);
+        return jsonData;
       } else {
         throw Exception('Falha ao executar a operação: ${resposta.statusCode}');
       }
