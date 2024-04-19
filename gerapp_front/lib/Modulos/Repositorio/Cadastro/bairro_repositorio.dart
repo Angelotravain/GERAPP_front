@@ -1,13 +1,33 @@
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:gerapp_front/Helpers/generic.dart';
-// import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
+import 'package:http/http.dart' as http;
 
-// final String urlBairro = "https://localhost:7009/api/Gerapp/Cadastro";
-// final String metodoGet = "ListarBairros";
+class BairroRepositorio {
+  Future<List<BairroModel>> GetAllBairros() async {
+    final response = await http.get(
+        Uri.parse('https://localhost:7009/api/Gerapp/Cadastro/ListarBairros'));
 
-// var http = Generic(urlBairro, metodoGet);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = json.decode(response.body);
+      List<BairroModel> bairros =
+          jsonData.map((e) => BairroModel.fromJson(json.encode(e))).toList();
 
-// Future<List<BairroModel> ListarTodosBairros() async{
-// final List<dynamic> bairros = http.consumirApiGet();
-// }
+      return bairros;
+    } else {
+      throw Exception('Falha ao buscar dados no servidor');
+    }
+  }
+
+  Future<String> deleteBairro(int id) async {
+    final response = await http.delete(Uri.parse(
+        'https://localhost:7009/api/Gerapp/Cadastro/ExcluirBairro/$id'));
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception(
+          'Falha ao excluir o bairro. Código de status: ${response.statusCode}');
+    }
+  }
+}

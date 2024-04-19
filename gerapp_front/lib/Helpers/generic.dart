@@ -8,9 +8,10 @@ class Generic {
   Generic(this.apiUrl, this.metodoGet);
 
   Future<List<dynamic>> consumirApiGet() async {
-    final cliente = http.Client(); // Inicializa um novo cliente HTTP
+    final cliente = http.Client();
     try {
-      final resposta = await cliente.get(Uri.parse(apiUrl + "/" + metodoGet));
+      final resposta =
+          await http.get(Uri.parse(apiUrl)); // + "/" + metodoGet));
 
       if (resposta.statusCode == 200) {
         final jsonData = json.decode(resposta.body);

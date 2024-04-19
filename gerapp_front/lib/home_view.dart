@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/generic.dart';
 import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
 import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
 
 class paginaPrincipal extends StatefulWidget {
   const paginaPrincipal({super.key});
@@ -15,6 +17,7 @@ class paginaPrincipal extends StatefulWidget {
 
 class _paginaPrincipalState extends State<paginaPrincipal> {
   final Color corFonte = Colors.white;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +63,7 @@ class _paginaPrincipalState extends State<paginaPrincipal> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'Aqui vai receber algum chart',
+              'Ola',
             ),
           ],
         ),
@@ -69,7 +72,7 @@ class _paginaPrincipalState extends State<paginaPrincipal> {
         onPressed: null,
         tooltip: 'Converse com um de nossos consultores!',
         child: const Icon(Icons.mail), //share
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
