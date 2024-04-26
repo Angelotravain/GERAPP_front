@@ -87,8 +87,12 @@ class _BairroGridState extends State<BairroGrid> {
               color: Colors.blueAccent,
               child: IconButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BairroForm()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BairroForm(
+                                validarFrete: null,
+                              )));
                 },
                 icon: Icon(
                   Icons.add,
@@ -133,6 +137,7 @@ class _BairroGridState extends State<BairroGrid> {
                                 MaterialPageRoute(
                                     builder: (context) => BairroForm(
                                           bairro: bairro,
+                                          validarFrete: bairro.isentaFrete,
                                         )));
                           },
                           icon: Icon(Icons.edit),
