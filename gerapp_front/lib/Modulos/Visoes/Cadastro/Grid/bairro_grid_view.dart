@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
+import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/fontes_cabecalho.dart';
 import 'package:gerapp_front/Modulos/Repositorio/Cadastro/bairro_repositorio.dart';
 import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/bairro_form_view.dart';
@@ -13,15 +17,14 @@ class BairroGrid extends StatefulWidget {
 
 class _BairroGridState extends State<BairroGrid> {
   void atualizarEstado() {
-    setState(() {
-      // Coloque aqui as atualizações de estado necessárias
-    });
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     _buscarTodosOsBairros();
+    _pollingBuscarBairros();
   }
 
   TextEditingController _pesquisa = TextEditingController();
@@ -32,17 +35,27 @@ class _BairroGridState extends State<BairroGrid> {
     List<BairroModel> bairros = await BairroRepositorio().GetAllBairros();
     setState(() {
       _bairros = bairros;
-      _filtrados = bairros;
+      if (_filtrados.isEmpty && _pesquisa.text == '') {
+        _filtrados = bairros;
+      }
+    });
+  }
+
+  void _pollingBuscarBairros() {
+    const duration = Duration(seconds: 0);
+    Timer.periodic(duration, (Timer timer) {
+      _buscarTodosOsBairros();
+      _filtrarPorPesquisa(_pesquisa.text);
     });
   }
 
   void _filtrarPorPesquisa(String filtro) {
-    // verificar o porque de não filtrar
     if (filtro != null || filtro != '') {
-      List<BairroModel> bairroFiltrado = _bairros
-          .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
-          .toList();
       setState(() {
+        List<BairroModel> bairroFiltrado = _bairros
+            .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
+            .toList();
+
         _filtrados = bairroFiltrado;
       });
     } else {
@@ -55,53 +68,24 @@ class _BairroGridState extends State<BairroGrid> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: TextFormField(
-            controller: _pesquisa,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-                hintText: _filtrados.length >= 1
-                    ? 'Pesquise seu bairro!'
-                    : 'Sem bairros!',
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0))),
-          ),
-          actions: [
-            Card(
-              color: Colors.blueAccent,
-              child: IconButton(
-                onPressed: () {
-                  _filtrarPorPesquisa(_pesquisa.text.toString());
-                },
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.white,
-                ),
-                tooltip: 'Pesquisar',
-              ),
-            ),
-            Card(
-              color: Colors.blueAccent,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BairroForm(
-                                validarFrete: null,
-                              )));
-                },
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                tooltip: 'Adicionar',
-              ),
-            ),
-          ],
+        appBar: AppBarGrid(
+          funcaoRota: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BairroForm(
+                          validarFrete: false,
+                        ))).then((value) {
+              _buscarTodosOsBairros();
+            });
+          },
+          funcaoAtualizar: () {
+            _filtrarPorPesquisa(_pesquisa.text);
+          },
+          validaHint: _filtrados.isNotEmpty,
+          hintPositivo: 'Pesquise seu bairro!',
+          hintNegativo: 'Sem bairros!',
+          controller: _pesquisa,
         ),
         body: ListView.builder(
             itemCount: _filtrados.length,
@@ -129,7 +113,7 @@ class _BairroGridState extends State<BairroGrid> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Card(
-                        color: Colors.blueAccent,
+                        color: Cores.AZUL_FUNDO,
                         child: IconButton(
                           onPressed: () {
                             Navigator.push(
@@ -138,47 +122,78 @@ class _BairroGridState extends State<BairroGrid> {
                                     builder: (context) => BairroForm(
                                           bairro: bairro,
                                           validarFrete: bairro.isentaFrete,
-                                        )));
+                                        ))).then((value) {
+                              _buscarTodosOsBairros();
+                            });
                           },
                           icon: Icon(Icons.edit),
-                          color: Colors.white,
+                          color: Cores.BRANCO,
                           tooltip: 'Editar',
                         ),
                       ),
                       Card(
-                        color: Colors.redAccent,
+                        color: Cores.VERMELHO,
                         child: IconButton(
                           onPressed: () {
-                            // Chamar a função para deletar o bairro e obter o resultado como um futuro
-                            Future<String> deleteFuture =
-                                BairroRepositorio().deleteBairro(bairro.id!);
                             showDialog(
-                              barrierColor: Colors.black38,
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Exclusão de Bairro'),
-                                  content: FutureBuilder<String>(
-                                    future: deleteFuture,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Erro: ${snapshot.error}');
-                                      } else {
-                                        _buscarTodosOsBairros();
-                                        return Text(snapshot.data ?? '');
-                                      }
-                                    },
-                                  ),
+                                  title: Text('Confirmação'),
+                                  content: Text(
+                                      'Tem certeza que deseja excluir este bairro?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        Future<String> deleteFuture =
+                                            BairroRepositorio()
+                                                .deleteBairro(bairro.id!);
+                                        showDialog(
+                                          barrierColor: Cores.PRETO,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Exclusão de Bairro'),
+                                              content: FutureBuilder<String>(
+                                                future: deleteFuture,
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String>
+                                                        snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircularProgressIndicator();
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    return Text(
+                                                        'Erro: ${snapshot.error}');
+                                                  } else {
+                                                    _buscarTodosOsBairros();
+                                                    return Text(
+                                                        snapshot.data ?? '');
+                                                  }
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text('Confirmar'),
+                                    ),
+                                  ],
                                 );
                               },
                             );
                           },
                           icon: Icon(Icons.delete),
-                          color: Colors.white,
+                          color: Cores.BRANCO,
                           tooltip: 'Excluir',
                         ),
                       ),

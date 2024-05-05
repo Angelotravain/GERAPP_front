@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Modulos/Visoes/Cadastro/Grid/bairro_grid_view.dart';
+import 'package:gerapp_front/Modulos/Visoes/Cadastro/Grid/cargo_grid_view.dart';
 
 class CadastrosMenu extends StatefulWidget {
   const CadastrosMenu({super.key});
@@ -27,7 +28,8 @@ class _CadastrosMenuState extends State<CadastrosMenu> {
             leading: Icon(Icons.person_outlined),
             title: Text('Cargos'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CargoGrid()));
             },
           ),
           ListTile(

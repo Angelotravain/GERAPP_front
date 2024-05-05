@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/generic.dart';
 import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
 import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
@@ -16,7 +17,7 @@ class paginaPrincipal extends StatefulWidget {
 }
 
 class _paginaPrincipalState extends State<paginaPrincipal> {
-  final Color corFonte = Colors.white;
+  final bool validaAppBar = true;
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +26,15 @@ class _paginaPrincipalState extends State<paginaPrincipal> {
         title: Text(
           'GERAPP',
           style: TextStyle(
-            color: corFonte,
+            color: Cores.BRANCO,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Cores.AZUL_FUNDO,
         actions: <Widget>[
           IconButton(
             icon: const Icon(
               Icons.shopping_cart,
-              color: Colors.white,
+              color: Cores.BRANCO,
             ),
             tooltip: 'Vá para o carrinho de agendamento',
             onPressed: () {

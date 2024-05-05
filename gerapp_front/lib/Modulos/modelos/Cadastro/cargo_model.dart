@@ -39,12 +39,24 @@ class CargoModel {
     return CargoModel(
       id: map['id'] as int,
       descricao: map['descricao'] as String,
-      acessaAuditoria: map['acessaAuditoria'] as bool,
-      acessaCadastro: map['acessaCadastro'] as bool,
-      acessaConfiguracao: map['acessaConfiguracao'] as bool,
-      acessaFinanceiro: map['acessaFinanceiro'] as bool,
-      acessaLocacao: map['acessaLocacao'] as bool,
-      gerarCadastro: map['gerarCadastro'] as bool,
+      acessaAuditoria: map['acessaAuditoria'] is String
+          ? map['acessaAuditoria'] == 'true'
+          : map['acessaAuditoria'] as bool,
+      acessaCadastro: map['acessaCadastro'] is String
+          ? map['acessaCadastro'] == 'true'
+          : map['acessaCadastro'] as bool,
+      acessaConfiguracao: map['acessaConfiguracao'] is String
+          ? map['acessaConfiguracao'] == 'true'
+          : map['acessaConfiguracao'] as bool,
+      acessaFinanceiro: map['acessaFinanceiro'] is String
+          ? map['acessaFinanceiro'] == 'true'
+          : map['acessaFinanceiro'] as bool,
+      acessaLocacao: map['acessaLocacao'] is String
+          ? map['acessaLocacao'] == 'true'
+          : map['acessaLocacao'] as bool,
+      gerarCadastro: map['geraCadastro'] is String
+          ? map['geraCadastro'] == 'true'
+          : map['geraCadastro'] as bool,
     );
   }
 

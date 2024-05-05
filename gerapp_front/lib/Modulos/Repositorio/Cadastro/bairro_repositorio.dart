@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+
+ValueItem cidadeSelecionada = ValueItem(label: '', value: 0);
 
 class BairroRepositorio {
   Future<List<BairroModel>> GetAllBairros() async {
@@ -28,6 +31,53 @@ class BairroRepositorio {
     } else {
       throw Exception(
           'Falha ao excluir o bairro. Código de status: ${response.statusCode}');
+    }
+  }
+
+  void atualizaCidadeParaEnviar(ValueItem first) {
+    cidadeSelecionada = first;
+  }
+
+  static const String baseUrl = 'https://localhost:7009/api/Gerapp/Cadastro/';
+  Future<void> salvarEditar(
+    String tipo,
+    String nome,
+    String valor,
+    bool? isentarFrete,
+    BairroModel? bairro,
+  ) async {
+    final bairroModel = BairroModel(
+        id: 0,
+        nome: nome,
+        valorFrete:
+            double.parse(valor.replaceAll('R\$', '').replaceAll(',', '.')),
+        isentaFrete: isentarFrete,
+        cidadeId: cidadeSelecionada.value == 0
+            ? bairro != null
+                ? bairro.cidadeId
+                : 1
+            : int.parse(cidadeSelecionada.value));
+
+    final url = Uri.parse(
+        '$baseUrl${tipo == 'PUT' ? 'AtualizarBairro/${bairro?.id}' : 'SalvarBairro'}');
+
+    try {
+      print(bairroModel.toJson());
+      final response = await (tipo == 'PUT'
+          ? http.put(headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8'
+            }, url, body: bairroModel.toJson())
+          : http.post(headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8'
+            }, url, body: bairroModel.toJson()));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Resposta da API: ${response.body}');
+      } else {
+        throw Exception('Falha na requisição: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao fazer a requisição: $e');
     }
   }
 }
