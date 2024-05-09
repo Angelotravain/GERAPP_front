@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:multi_dropdown/multiselect_dropdown.dart';
@@ -8,8 +9,8 @@ ValueItem cidadeSelecionada = ValueItem(label: '', value: 0);
 
 class BairroRepositorio {
   Future<List<BairroModel>> GetAllBairros() async {
-    final response = await http.get(
-        Uri.parse('https://localhost:7009/api/Gerapp/Cadastro/ListarBairros'));
+    final response = await http
+        .get(Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ListarBairros'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
@@ -23,8 +24,8 @@ class BairroRepositorio {
   }
 
   Future<String> deleteBairro(int id) async {
-    final response = await http.delete(Uri.parse(
-        'https://localhost:7009/api/Gerapp/Cadastro/ExcluirBairro/$id'));
+    final response = await http.delete(
+        Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ExcluirBairro/$id'));
 
     if (response.statusCode == 200) {
       return response.body;
@@ -38,7 +39,7 @@ class BairroRepositorio {
     cidadeSelecionada = first;
   }
 
-  static const String baseUrl = 'https://localhost:7009/api/Gerapp/Cadastro/';
+  static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
   Future<void> salvarEditar(
     String tipo,
     String nome,

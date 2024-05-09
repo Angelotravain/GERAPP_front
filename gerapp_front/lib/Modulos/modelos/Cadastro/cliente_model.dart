@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:gerapp_front/Modulos/modelos/Cadastro/endereco_model.dart';
@@ -16,8 +15,8 @@ class ClienteModel {
   final String nomeConjugue;
   final DateTime dataNascimento;
   final String imagem;
-  final UsuarioModel usuario;
-  final List<EnderecoModel> endereco;
+  final UsuarioModel? usuario;
+  final List<EnderecoModel>? endereco;
 
   ClienteModel({
     required this.id,
@@ -31,8 +30,8 @@ class ClienteModel {
     required this.nomeConjugue,
     required this.dataNascimento,
     required this.imagem,
-    required this.usuario,
-    required this.endereco,
+    this.usuario,
+    this.endereco,
   });
 
   Map<String, dynamic> toMap() {
@@ -46,10 +45,10 @@ class ClienteModel {
       'nomeMae': nomeMae,
       'nomePai': nomePai,
       'nomeConjugue': nomeConjugue,
-      'dataNascimento': dataNascimento.millisecondsSinceEpoch,
+      'dataNascimento': dataNascimento.toLocal(),
       'imagem': imagem,
-      'usuario': usuario.toMap(),
-      'endereco': endereco.map((x) => x.toMap()).toList(),
+      'usuarioCliente': usuario?.toMap(),
+      'enderecoCliente': endereco?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -64,15 +63,15 @@ class ClienteModel {
       nomeMae: map['nomeMae'] as String,
       nomePai: map['nomePai'] as String,
       nomeConjugue: map['nomeConjugue'] as String,
-      dataNascimento:
-          DateTime.fromMillisecondsSinceEpoch(map['dataNascimento'] as int),
+      dataNascimento: DateTime.parse(map['dataNascimento'] as String),
       imagem: map['imagem'] as String,
-      usuario: UsuarioModel.fromMap(map['usuario'] as Map<String, dynamic>),
-      endereco: List<EnderecoModel>.from(
-        (map['endereco'] as List<int>).map<EnderecoModel>(
-          (x) => EnderecoModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      usuario: map['usuarioCliente'] != null
+          ? UsuarioModel.fromMap(map['usuarioCliente'] as Map<String, dynamic>)
+          : null,
+      endereco: map['enderecoCliente'] != null
+          ? List<EnderecoModel>.from((map['enderecoCliente'] as List)
+              .map((x) => EnderecoModel.fromMap(x as Map<String, dynamic>)))
+          : null,
     );
   }
 

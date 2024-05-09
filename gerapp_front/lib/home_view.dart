@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/generic.dart';
 import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
@@ -18,6 +19,7 @@ class paginaPrincipal extends StatefulWidget {
 
 class _paginaPrincipalState extends State<paginaPrincipal> {
   final bool validaAppBar = true;
+  bool _acessaAuditoria = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +33,29 @@ class _paginaPrincipalState extends State<paginaPrincipal> {
         ),
         backgroundColor: Cores.AZUL_FUNDO,
         actions: <Widget>[
+          ToogleSelecao(
+            label: '',
+            value: _acessaAuditoria,
+            onChanged: (value) {
+              setState(() {
+                _acessaAuditoria = value;
+              });
+            },
+          ),
+          SizedBox(
+            width: 20,
+          ),
           IconButton(
             icon: const Icon(
               Icons.shopping_cart,
               color: Cores.BRANCO,
             ),
             tooltip: 'Vá para o carrinho de agendamento',
-            onPressed: () {
-              // handle the press
-            },
+            onPressed: () {},
             alignment: Alignment.centerRight,
+          ),
+          SizedBox(
+            width: 20,
           ),
         ],
       ),

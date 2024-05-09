@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/cargo_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class CargoRepositorio {
   Future<List<CargoModel>> GetAllCargos() async {
-    final response = await http.get(
-        Uri.parse('https://localhost:7009/api/Gerapp/Cadastro/ListarCargos'));
+    final response = await http
+        .get(Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ListarCargos'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
@@ -21,8 +22,8 @@ class CargoRepositorio {
   }
 
   Future<String> deleteCargo(int id) async {
-    final response = await http.delete(Uri.parse(
-        'https://localhost:7009/api/Gerapp/Cadastro/ExcluirCargo/$id'));
+    final response = await http.delete(
+        Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ExcluirCargo/$id'));
 
     if (response.statusCode == 200) {
       return response.body;
@@ -32,7 +33,7 @@ class CargoRepositorio {
     }
   }
 
-  static const String baseUrl = 'https://localhost:7009/api/Gerapp/Cadastro/';
+  static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
   Future<void> salvarEditar(
     String tipo,
     String descricaoCargo,

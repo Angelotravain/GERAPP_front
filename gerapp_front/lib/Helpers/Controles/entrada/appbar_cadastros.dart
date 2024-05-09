@@ -8,7 +8,7 @@ class AppBarCadastros extends StatelessWidget implements PreferredSizeWidget {
   final Icon? icone;
   final String? tipoApp;
 
-  const AppBarCadastros(
+  AppBarCadastros(
       {this.titulo,
       this.funcaoSalvar,
       this.icone,

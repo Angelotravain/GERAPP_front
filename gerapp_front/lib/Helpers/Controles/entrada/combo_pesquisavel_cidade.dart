@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/Repositorio/Cadastro/bairro_repositorio.dart';
 import 'package:gerapp_front/Modulos/Repositorio/Cadastro/cidade_repositorio.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
@@ -6,9 +7,13 @@ import 'package:multi_dropdown/multiselect_dropdown.dart';
 class CustomMultiSelectDropDown extends StatelessWidget {
   final MultiSelectController controller;
   final ValueItem? valorEntrada;
+  final String? localBuscaDados;
 
   const CustomMultiSelectDropDown(
-      {Key? key, required this.controller, required this.valorEntrada})
+      {Key? key,
+      required this.controller,
+      required this.valorEntrada,
+      this.localBuscaDados})
       : super(key: key);
 
   @override
@@ -24,12 +29,17 @@ class CustomMultiSelectDropDown extends StatelessWidget {
       ),
       controller: controller,
       borderRadius: 30.0,
-      hint: 'Pesquise aqui sua cidade!',
+      hint: localBuscaDados == 'B'
+          ? 'Pesquise seu bairro'
+          : 'Pesquise aqui sua cidade!',
       selectionType: SelectionType.single,
-      searchLabel: 'Pesquise aqui sua cidade!',
+      searchLabel: localBuscaDados == 'B'
+          ? 'Pesquise seu bairro'
+          : 'Pesquise aqui sua cidade!',
       networkConfig: NetworkConfig(
-        url:
-            'https://localhost:7009/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0',
+        url: localBuscaDados == 'B'
+            ? '${Local.localName}/api/Gerapp/Cadastro/ListarBairros'
+            : '${Local.localName}/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0',
         method: RequestMethod.get,
         headers: {'Content-Type': 'application/json'},
       ),
@@ -57,6 +67,7 @@ class CustomMultiSelectDropDown extends StatelessWidget {
         controller.options.add(options.first);
         if (options.isNotEmpty) {}
         BairroRepositorio().atualizaCidadeParaEnviar(options.first);
+        // criar um atualizar bairro para enviar o id do bairro
       },
     );
   }

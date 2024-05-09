@@ -6,4 +6,5 @@ class Cores {
   static const Color CINZA_CLARO = Color(0xFFD3D3D3);
   static const Color PRETO = Colors.black;
   static const Color VERMELHO = Colors.redAccent;
+  static const Color VERDE = Colors.greenAccent;
 }

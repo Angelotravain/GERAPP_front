@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Cores/cores.dart';
 
 class ToogleSelecao extends StatelessWidget {
   final String label;
@@ -17,6 +18,7 @@ class ToogleSelecao extends StatelessWidget {
         Switch(
           value: value,
           onChanged: onChanged,
+          activeColor: Cores.VERDE,
         ),
       ],
     );

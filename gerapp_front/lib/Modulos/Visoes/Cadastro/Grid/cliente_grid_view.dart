@@ -1,66 +1,37 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
-import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
-import 'package:gerapp_front/Modulos/Repositorio/Cadastro/cargo_repositorio.dart';
-import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/cargo_form_view.dart';
-import 'package:gerapp_front/Modulos/modelos/Cadastro/cargo_model.dart';
+import 'package:gerapp_front/Helpers/conversor.dart';
+import 'package:gerapp_front/Modulos/Repositorio/Cadastro/cliente_repositorio.dart';
+import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/cliente_form_view.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/Cliente_model.dart';
 
-class CargoGrid extends StatefulWidget {
-  const CargoGrid({super.key});
+class ClienteGrid extends StatefulWidget {
+  const ClienteGrid({super.key});
 
   @override
-  State<CargoGrid> createState() => _CargoGridState();
+  State<ClienteGrid> createState() => _ClienteGridState();
 }
 
-TextEditingController _pesquisa = TextEditingController();
-List<CargoModel> _cargos = [];
-List<CargoModel> _filtrados = [];
+class _ClienteGridState extends State<ClienteGrid> {
+  TextEditingController _pesquisa = TextEditingController();
+  List<ClienteModel> _clientes = [];
+  List<ClienteModel> _filtrados = [];
 
-class _CargoGridState extends State<CargoGrid> {
   @override
   void initState() {
-    super.initState();
-    _buscarTodosOsCargos();
-    _pollingBuscarCargos();
+    _buscarTodosOsClientes();
+    _pollingBuscarClientes();
   }
 
-  void _buscarTodosOsCargos() async {
-    List<CargoModel> cargos = await CargoRepositorio().GetAllCargos();
-    setState(() {
-      _cargos = cargos;
-      if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = cargos;
-      }
-    });
-  }
-
-  void _pollingBuscarCargos() {
+  void _pollingBuscarClientes() {
     const duration = Duration(seconds: 0);
     Timer.periodic(duration, (Timer timer) {
-      _buscarTodosOsCargos();
+      _buscarTodosOsClientes();
       _filtrarPorPesquisa(_pesquisa.text);
     });
-  }
-
-  void _filtrarPorPesquisa(String filtro) {
-    if (filtro != null || filtro != '') {
-      setState(() {
-        List<CargoModel> bairroFiltrado = _cargos
-            .where(
-                (x) => x.descricao.toLowerCase().contains(filtro.toLowerCase()))
-            .toList();
-
-        _filtrados = bairroFiltrado;
-      });
-    } else {
-      setState(() {
-        _filtrados = _cargos;
-      });
-    }
   }
 
   @override
@@ -73,43 +44,46 @@ class _CargoGridState extends State<CargoGrid> {
         },
         funcaoRota: () {
           Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CargoForm(null)))
+                  MaterialPageRoute(builder: (context) => ClienteForm(null)))
               .then((value) {
-            _buscarTodosOsCargos();
+            _buscarTodosOsClientes();
           });
         },
-        hintNegativo: 'Sem cargos para exibir!',
-        hintPositivo: 'Pesquise seu cargo!',
+        hintNegativo: 'Sem clientes para exibir!',
+        hintPositivo: 'Pesquise seu cliente!',
         validaHint: _filtrados.isNotEmpty,
       ),
       body: ListView.builder(
           itemCount: _filtrados.length,
           itemBuilder: (context, index) {
-            CargoModel cargo = _filtrados[index];
+            ClienteModel cliente = _filtrados[index];
             return Card(
               child: ListTile(
+                key: Key(cliente.id.toString()),
+                leading: cliente.imagem != ''
+                    ? CircleAvatar(
+                        backgroundImage:
+                            Conversor.convertBase64ToImage(cliente.imagem),
+                      )
+                    : CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://cdn-icons-png.flaticon.com/512/1503/1503355.png'),
+                      ),
                 title: Text(
-                  cargo.descricao,
+                  cliente.nome,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
                   ),
                 ),
-                subtitle: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Verifica a largura da tela
-                    bool isWideScreen = constraints.maxWidth > 600;
-
-                    return isWideScreen
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: _buildToogleSelecao(cargo),
-                          )
-                        : Column(
-                            children: _buildToogleSelecao(cargo),
-                          );
-                  },
+                subtitle: Text(
+                  cliente.email,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                  ),
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -121,18 +95,24 @@ class _CargoGridState extends State<CargoGrid> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CargoForm(CargoModel(
-                                      id: cargo.id,
-                                      acessaAuditoria: cargo.acessaAuditoria,
-                                      acessaCadastro: cargo.acessaCadastro,
-                                      acessaConfiguracao:
-                                          cargo.acessaConfiguracao,
-                                      acessaFinanceiro: cargo.acessaFinanceiro,
-                                      acessaLocacao: cargo.acessaLocacao,
-                                      descricao: cargo.descricao,
-                                      gerarCadastro:
-                                          cargo.gerarCadastro)))).then((value) {
-                            _buscarTodosOsCargos();
+                                  builder: (context) => ClienteForm(
+                                      ClienteModel(
+                                          id: cliente.id,
+                                          nome: cliente.nome,
+                                          email: cliente.email,
+                                          cpf: cliente.cpf,
+                                          telefone: cliente.telefone,
+                                          statusCliente: cliente.statusCliente,
+                                          nomeMae: cliente.nomeMae,
+                                          nomePai: cliente.nomePai,
+                                          nomeConjugue: cliente.nomeConjugue,
+                                          dataNascimento:
+                                              cliente.dataNascimento,
+                                          imagem: cliente.imagem,
+                                          usuario: cliente.usuario,
+                                          endereco: cliente.endereco)))).then(
+                              (value) {
+                            _buscarTodosOsClientes();
                           });
                         },
                         icon: Icon(Icons.edit),
@@ -162,8 +142,8 @@ class _CargoGridState extends State<CargoGrid> {
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                       Future<String> deleteFuture =
-                                          CargoRepositorio()
-                                              .deleteCargo(cargo.id!);
+                                          ClienteRepositorio()
+                                              .deleteCliente(cliente.id!);
                                       showDialog(
                                         barrierColor: Cores.PRETO,
                                         context: context,
@@ -182,7 +162,7 @@ class _CargoGridState extends State<CargoGrid> {
                                                   return Text(
                                                       'Erro: ${snapshot.error}');
                                                 } else {
-                                                  _buscarTodosOsCargos();
+                                                  _buscarTodosOsClientes();
                                                   return Text(
                                                       snapshot.data ?? '');
                                                 }
@@ -212,38 +192,29 @@ class _CargoGridState extends State<CargoGrid> {
     );
   }
 
-  List<Widget> _buildToogleSelecao(CargoModel cargo) {
-    return [
-      ToogleSelecao(
-        label: 'Visualiza Auditoria?',
-        value: cargo.acessaAuditoria,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Visualiza cadastro?',
-        value: cargo.acessaCadastro,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Visualiza Configuração?',
-        value: cargo.acessaConfiguracao,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Visualiza Financeiro?',
-        value: cargo.acessaFinanceiro,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Visualiza Locação?',
-        value: cargo.acessaLocacao,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Gera cadastros?',
-        value: cargo.gerarCadastro,
-        onChanged: (value) {},
-      ),
-    ];
+  void _filtrarPorPesquisa(String filtro) {
+    if (filtro != null || filtro != '') {
+      setState(() {
+        List<ClienteModel> bairroFiltrado = _clientes
+            .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
+            .toList();
+
+        _filtrados = bairroFiltrado;
+      });
+    } else {
+      setState(() {
+        _filtrados = _clientes;
+      });
+    }
+  }
+
+  void _buscarTodosOsClientes() async {
+    List<ClienteModel> clientes = await ClienteRepositorio().GetAllClientes();
+    setState(() {
+      _clientes = clientes;
+      if (_filtrados.isEmpty && _pesquisa.text == '') {
+        _filtrados = clientes;
+      }
+    });
   }
 }
