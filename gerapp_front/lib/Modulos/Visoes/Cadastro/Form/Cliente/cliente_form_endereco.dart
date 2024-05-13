@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/combo_pesquisavel_cidade.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
@@ -13,6 +14,7 @@ class ClienteFormEndereco extends StatefulWidget {
   final TextEditingController? cepCliente;
   final TextEditingController? numeroCliente;
   final TextEditingController? complemento;
+  final int? clienteId;
   final List<EnderecoModel>? enderecoAdicionado;
 
   const ClienteFormEndereco(
@@ -23,7 +25,8 @@ class ClienteFormEndereco extends StatefulWidget {
       this.cepCliente,
       this.complemento,
       this.numeroCliente,
-      this.enderecoAdicionado})
+      this.enderecoAdicionado,
+      this.clienteId})
       : super(key: key);
 
   @override
@@ -40,74 +43,35 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
-            controller: widget.cepCliente,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-              hintText: 'CEP',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              suffixIcon: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Caiu aqui'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.search),
-                ),
+          CampoTexto(
+            controller: widget.cepCliente!,
+            label: 'CEP',
+            sufix: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Caiu aqui'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.search),
               ),
             ),
           ),
           SizedBox(height: 20.0),
-          TextFormField(
-            controller: widget.logradouroCliente,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-              hintText: 'Logradouro',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-            ),
+          CampoTexto(
+            controller: widget.logradouroCliente!,
+            label: 'Logradouro',
           ),
           SizedBox(height: 20.0),
-          TextFormField(
-            controller: widget.numeroCliente,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-              hintText: 'Número',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-            ),
-          ),
+          CampoTexto(controller: widget.numeroCliente!, label: 'Número'),
           SizedBox(height: 20.0),
-          TextFormField(
-            controller: widget.complemento,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-              hintText: 'Complemento',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-            ),
+          CampoTexto(
+            controller: widget.complemento!,
+            label: 'Complemento',
           ),
           SizedBox(height: 20.0),
           widget.bairro != null
@@ -149,9 +113,14 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                     numero: widget.numeroCliente!.text,
                     complemento: widget.complemento!.text,
                     cep: widget.cepCliente!.text,
-                    bairroId: 0,
+                    bairroId: int.parse(_selecionarBairro.options.first.value),
+                    clienteId: widget.clienteId,
                   ),
                 );
+                widget.logradouroCliente!.text = '';
+                widget.numeroCliente!.text = '';
+                widget.complemento!.text = '';
+                widget.cepCliente!.text = '';
               });
             },
             child: Text('Adicionar endereço na lista'),
@@ -166,16 +135,41 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                   child: ListTile(
                     title: Text(item.logradouro + item.numero ?? ''),
                     subtitle: Text(item.complemento),
-                    trailing: Card(
-                      child: IconButton(
-                        color: Cores.VERMELHO,
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            widget.enderecoAdicionado!.remove(index);
-                          });
-                        },
-                      ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          child: IconButton(
+                            color: Cores.AZUL_FUNDO,
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              setState(() {
+                                var selecionado =
+                                    widget.enderecoAdicionado!.elementAt(index);
+                                widget.cepCliente!.text = selecionado.cep;
+                                widget.logradouroCliente!.text =
+                                    selecionado.logradouro;
+                                widget.numeroCliente!.text = selecionado.numero;
+                                widget.complemento!.text =
+                                    selecionado.complemento;
+                                widget.enderecoAdicionado!.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Card(
+                          child: IconButton(
+                            color: Cores.VERMELHO,
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              setState(() {
+                                widget.enderecoAdicionado!.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );

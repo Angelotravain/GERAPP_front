@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/combo_pesquisavel_cidade.dart';
@@ -75,30 +76,16 @@ class _BairroFormState extends State<BairroForm> {
         child: ListView(
           children: [
             const Padding(padding: EdgeInsets.all(10)),
-            TextFormField(
+            CampoTexto(
               controller: _nomeController,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-              ),
-              decoration: InputDecoration(
-                  hintText: 'Nome',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0))),
+              label: 'Nome',
             ),
             const SizedBox(
               height: 10.0,
             ),
-            TextFormField(
+            CampoTexto(
               controller: _valorFreteController,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-              ),
-              decoration: InputDecoration(
-                  hintText: 'R\$ Valor do Frete',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0))),
+              label: 'R\$ Valor do Frete',
             ),
             const SizedBox(
               height: 10.0,

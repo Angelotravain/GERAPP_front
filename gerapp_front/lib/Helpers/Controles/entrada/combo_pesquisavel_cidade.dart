@@ -21,54 +21,57 @@ class CustomMultiSelectDropDown extends StatelessWidget {
     if (valorEntrada != null) {
       controller.options.add(valorEntrada!);
     }
-    return MultiSelectDropDown.network(
-      searchEnabled: true,
-      optionTextStyle: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontFamily: 'Roboto',
-      ),
-      controller: controller,
-      borderRadius: 30.0,
-      hint: localBuscaDados == 'B'
-          ? 'Pesquise seu bairro'
-          : 'Pesquise aqui sua cidade!',
-      selectionType: SelectionType.single,
-      searchLabel: localBuscaDados == 'B'
-          ? 'Pesquise seu bairro'
-          : 'Pesquise aqui sua cidade!',
-      networkConfig: NetworkConfig(
-        url: localBuscaDados == 'B'
-            ? '${Local.localName}/api/Gerapp/Cadastro/ListarBairros'
-            : '${Local.localName}/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0',
-        method: RequestMethod.get,
-        headers: {'Content-Type': 'application/json'},
-      ),
-      chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-      selectedOptionIcon: const Icon(Icons.check_circle),
-      selectedOptions:
-          controller.options.isNotEmpty ? [controller.options.first] : [],
-      responseParser: (response) {
-        final list = (response as List<dynamic>).map((e) {
-          final item = e as Map<String, dynamic>;
-          return ValueItem(
-            label: item['nome'],
-            value: item['id'].toString(),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: MultiSelectDropDown.network(
+        searchEnabled: true,
+        optionTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Roboto',
+        ),
+        controller: controller,
+        borderRadius: 15.0,
+        hint: localBuscaDados == 'B'
+            ? 'Pesquise seu bairro'
+            : 'Pesquise aqui sua cidade!',
+        selectionType: SelectionType.single,
+        searchLabel: localBuscaDados == 'B'
+            ? 'Pesquise seu bairro'
+            : 'Pesquise aqui sua cidade!',
+        networkConfig: NetworkConfig(
+          url: localBuscaDados == 'B'
+              ? '${Local.localName}/api/Gerapp/Cadastro/ListarBairros'
+              : '${Local.localName}/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0',
+          method: RequestMethod.get,
+          headers: {'Content-Type': 'application/json'},
+        ),
+        chipConfig: const ChipConfig(wrapType: WrapType.wrap),
+        selectedOptionIcon: const Icon(Icons.check_circle),
+        selectedOptions:
+            controller.options.isNotEmpty ? [controller.options.first] : [],
+        responseParser: (response) {
+          final list = (response as List<dynamic>).map((e) {
+            final item = e as Map<String, dynamic>;
+            return ValueItem(
+              label: item['nome'],
+              value: item['id'].toString(),
+            );
+          }).toList();
+          return Future.value(list);
+        },
+        responseErrorBuilder: ((context, body) {
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text('Erro ao buscar dados'),
           );
-        }).toList();
-        return Future.value(list);
-      },
-      responseErrorBuilder: ((context, body) {
-        return const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text('Erro ao buscar dados'),
-        );
-      }),
-      onOptionSelected: (options) {
-        controller.options.add(options.first);
-        if (options.isNotEmpty) {}
-        BairroRepositorio().atualizaCidadeParaEnviar(options.first);
-        // criar um atualizar bairro para enviar o id do bairro
-      },
+        }),
+        onOptionSelected: (options) {
+          controller.options.add(options.first);
+          if (options.isNotEmpty) {}
+          BairroRepositorio().atualizaCidadeParaEnviar(options.first);
+          // criar um atualizar bairro para enviar o id do bairro
+        },
+      ),
     );
   }
 }

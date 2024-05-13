@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:gerapp_front/Modulos/modelos/Cadastro/endereco_model.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/usuario_model.dart';
 
@@ -35,7 +34,7 @@ class ClienteModel {
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'nome': nome,
       'email': email,
@@ -45,7 +44,7 @@ class ClienteModel {
       'nomeMae': nomeMae,
       'nomePai': nomePai,
       'nomeConjugue': nomeConjugue,
-      'dataNascimento': dataNascimento.toLocal(),
+      'dataNascimento': dataNascimento.toIso8601String(),
       'imagem': imagem,
       'usuarioCliente': usuario?.toMap(),
       'enderecoCliente': endereco?.map((x) => x.toMap()).toList(),

@@ -5,6 +5,7 @@ class AppBarCadastros extends StatelessWidget implements PreferredSizeWidget {
   final String? titulo;
   final String? toolTipEntrada;
   final VoidCallback? funcaoSalvar;
+  final PreferredSizeWidget? bottom;
   final Icon? icone;
   final String? tipoApp;
 
@@ -13,7 +14,8 @@ class AppBarCadastros extends StatelessWidget implements PreferredSizeWidget {
       this.funcaoSalvar,
       this.icone,
       this.toolTipEntrada,
-      this.tipoApp});
+      this.tipoApp,
+      this.bottom});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 50);
@@ -23,6 +25,7 @@ class AppBarCadastros extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(titulo!),
       backgroundColor: Cores.AZUL_FUNDO,
+      bottom: bottom,
       actions: [
         Card(
           color: Cores.CINZA_CLARO,

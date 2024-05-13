@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/home_view.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +15,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'GERAPP',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('pt', 'BR'),
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Cores.AZUL_FUNDO),
         useMaterial3: true,

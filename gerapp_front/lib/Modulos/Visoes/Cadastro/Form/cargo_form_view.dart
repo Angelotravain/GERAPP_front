@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
@@ -55,16 +56,12 @@ class _CargoScreenState extends State<CargoForm> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
+          SizedBox(
+            height: 20,
+          ),
+          CampoTexto(
             controller: _descricaoController,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-            decoration: InputDecoration(
-                hintText: 'Descrição do Cargo',
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0))),
+            label: 'Descrição do Cargo',
           ),
           SizedBox(height: 20.0),
           ToogleSelecao(

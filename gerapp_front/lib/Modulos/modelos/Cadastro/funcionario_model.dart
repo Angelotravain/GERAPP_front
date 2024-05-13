@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:gerapp_front/Modulos/modelos/Cadastro/endereco_model.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/usuario_model.dart';
 
@@ -11,8 +9,8 @@ class FuncionarioModel {
   final String imagem;
   final int empresaId;
   final int cargoId;
-  final UsuarioModel usuario;
-  final List<EnderecoModel> endereco;
+  final UsuarioModel? usuarioFuncionario;
+  final List<EnderecoModel>? enderecoFuncionario;
 
   FuncionarioModel({
     required this.id,
@@ -21,37 +19,39 @@ class FuncionarioModel {
     required this.imagem,
     required this.empresaId,
     required this.cargoId,
-    required this.usuario,
-    required this.endereco,
+    required this.usuarioFuncionario,
+    required this.enderecoFuncionario,
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'nome': nome,
       'salario': salario,
       'imagem': imagem,
       'empresaId': empresaId,
       'cargoId': cargoId,
-      'usuario': usuario.toMap(),
-      'endereco': endereco.map((x) => x.toMap()).toList(),
+      'usuarioFuncionario': usuarioFuncionario!.toMap(),
+      'enderecoFuncionario':
+          enderecoFuncionario!.map((x) => x.toMap()).toList(),
     };
   }
 
   factory FuncionarioModel.fromMap(Map<String, dynamic> map) {
     return FuncionarioModel(
-      id: map['id'] as int,
-      nome: map['nome'] as String,
-      salario: map['salario'] as double,
-      imagem: map['imagem'] as String,
-      empresaId: map['empresaId'] as int,
-      cargoId: map['cargoId'] as int,
-      usuario: UsuarioModel.fromMap(map['usuario'] as Map<String, dynamic>),
-      endereco: List<EnderecoModel>.from(
-        (map['endereco'] as List<int>).map<EnderecoModel>(
-          (x) => EnderecoModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      id: map['id'] as int ?? 0,
+      nome: map['nome'] as String ?? '',
+      salario: map['salario'] as double ?? 0,
+      imagem: map['imagem'] as String ?? '',
+      empresaId: map['empresaId'] as int ?? 0,
+      cargoId: map['cargoId'] as int ?? 0,
+      usuarioFuncionario: map['usuarioCliente'] != null
+          ? UsuarioModel.fromMap(map['usuarioCliente'] as Map<String, dynamic>)
+          : null,
+      enderecoFuncionario: map['enderecoCliente'] != null
+          ? List<EnderecoModel>.from((map['enderecoCliente'] as List)
+              .map((x) => EnderecoModel.fromMap(x as Map<String, dynamic>)))
+          : null,
     );
   }
 

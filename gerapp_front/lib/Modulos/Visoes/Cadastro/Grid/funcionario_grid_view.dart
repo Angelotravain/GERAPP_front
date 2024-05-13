@@ -4,35 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/conversor.dart';
-import 'package:gerapp_front/Modulos/Repositorio/Cadastro/cliente_repositorio.dart';
-import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/Cliente/cliente_form_view.dart';
-import 'package:gerapp_front/Modulos/modelos/Cadastro/Cliente_model.dart';
+import 'package:gerapp_front/Modulos/Repositorio/Cadastro/funcionario_repositorio.dart';
+import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/Funcionario/funcionario_form_view.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/funcionario_model.dart';
 
-class ClienteGrid extends StatefulWidget {
-  const ClienteGrid({super.key});
+class FuncionarioGrid extends StatefulWidget {
+  const FuncionarioGrid({super.key});
 
   @override
-  State<ClienteGrid> createState() => _ClienteGridState();
+  State<FuncionarioGrid> createState() => _funcionarioGridState();
 }
 
-class _ClienteGridState extends State<ClienteGrid> {
+class _funcionarioGridState extends State<FuncionarioGrid> {
   TextEditingController _pesquisa = TextEditingController();
-  List<ClienteModel> _clientes = [];
-  List<ClienteModel> _filtrados = [];
+  List<FuncionarioModel> _funcionarios = [];
+  List<FuncionarioModel> _filtrados = [];
   String? image = '';
 
   @override
   void initState() {
-    _buscarTodosOsClientes();
-    _pollingBuscarClientes();
+    _buscarTodosOsFuncionarios();
   }
 
-  void _pollingBuscarClientes() {
-    const duration = Duration(seconds: 3);
-    Timer.periodic(duration, (Timer timer) {
-      _filtrarPorPesquisa(_pesquisa.text);
-    });
-  }
+  // void _pollingBuscarfuncionarios() {
+  //   const duration = Duration(seconds: 0);
+  //   Timer.periodic(duration, (Timer timer) {
+  //     if (_pesquisa.text != '') _filtrarPorPesquisa(_pesquisa.text);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -43,42 +42,35 @@ class _ClienteGridState extends State<ClienteGrid> {
           _filtrarPorPesquisa(_pesquisa.text);
         },
         funcaoRota: () {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ClienteForm(null)))
-              .then((value) {
-            _buscarTodosOsClientes();
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FuncionarioForm(null))).then((value) {
+            _buscarTodosOsFuncionarios();
           });
         },
-        hintNegativo: 'Sem clientes para exibir!',
-        hintPositivo: 'Pesquise seu cliente!',
+        hintNegativo: 'Sem funcionarios para exibir!',
+        hintPositivo: 'Pesquise seu funcionario!',
         validaHint: _filtrados.isNotEmpty,
       ),
       body: ListView.builder(
           itemCount: _filtrados.length,
           itemBuilder: (context, index) {
-            ClienteModel cliente = _filtrados[index];
+            FuncionarioModel funcionario = _filtrados[index];
             return Card(
               child: ListTile(
-                key: Key(cliente.id.toString()),
-                leading: cliente.imagem != ''
+                key: Key(funcionario.id.toString()),
+                leading: funcionario.imagem != ''
                     ? CircleAvatar(
                         backgroundImage:
-                            Conversor.convertBase64ToImage(cliente.imagem),
+                            Conversor.convertBase64ToImage(funcionario.imagem),
                       )
                     : CircleAvatar(
                         backgroundImage: NetworkImage(
                             'https://cdn-icons-png.flaticon.com/512/1503/1503355.png'),
                       ),
                 title: Text(
-                  cliente.nome,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                subtitle: Text(
-                  cliente.email,
+                  funcionario.nome,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -95,11 +87,20 @@ class _ClienteGridState extends State<ClienteGrid> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      ClienteForm(cliente))).then((value) {
-                            setState(() {
-                              _buscarTodosOsClientes();
-                            });
+                                  builder: (context) => FuncionarioForm(
+                                      FuncionarioModel(
+                                          id: funcionario.id ?? 0,
+                                          nome: funcionario.nome ?? '',
+                                          salario: funcionario.salario ?? 0,
+                                          cargoId: funcionario.cargoId ?? 0,
+                                          empresaId: funcionario.empresaId ?? 0,
+                                          imagem: funcionario.imagem ?? '',
+                                          usuarioFuncionario:
+                                              funcionario.usuarioFuncionario,
+                                          enderecoFuncionario:
+                                              funcionario.enderecoFuncionario ??
+                                                  [])))).then((value) {
+                            _buscarTodosOsFuncionarios();
                           });
                         },
                         icon: Icon(Icons.edit),
@@ -129,8 +130,9 @@ class _ClienteGridState extends State<ClienteGrid> {
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                       Future<String> deleteFuture =
-                                          ClienteRepositorio()
-                                              .deleteCliente(cliente.id!);
+                                          FuncionarioRepositorio()
+                                              .deleteFuncionario(
+                                                  funcionario.id!);
                                       showDialog(
                                         barrierColor: Cores.PRETO,
                                         context: context,
@@ -149,7 +151,7 @@ class _ClienteGridState extends State<ClienteGrid> {
                                                   return Text(
                                                       'Erro: ${snapshot.error}');
                                                 } else {
-                                                  _buscarTodosOsClientes();
+                                                  _buscarTodosOsFuncionarios();
                                                   return Text(
                                                       snapshot.data ?? '');
                                                 }
@@ -182,25 +184,26 @@ class _ClienteGridState extends State<ClienteGrid> {
   void _filtrarPorPesquisa(String filtro) {
     if (filtro != null && filtro != '') {
       setState(() {
-        List<ClienteModel> bairroFiltrado = _clientes
+        List<FuncionarioModel> funcionarioFiltrado = _funcionarios
             .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
             .toList();
 
-        _filtrados = bairroFiltrado;
+        _filtrados = funcionarioFiltrado;
       });
     } else {
       setState(() {
-        _filtrados = _clientes;
+        _filtrados = _funcionarios;
       });
     }
   }
 
-  void _buscarTodosOsClientes() async {
-    List<ClienteModel> clientes = await ClienteRepositorio().GetAllClientes();
+  void _buscarTodosOsFuncionarios() async {
+    List<FuncionarioModel> funcionarios =
+        await FuncionarioRepositorio().GetAllFuncionarios();
     setState(() {
-      _clientes = clientes;
+      _funcionarios = funcionarios;
       if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = clientes;
+        _filtrados = funcionarios;
       }
     });
   }

@@ -28,7 +28,7 @@ class AppBarGrid extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: kToolbarHeight + 70,
       backgroundColor: Cores.AZUL_FUNDO,
       title: Padding(
-        padding: const EdgeInsets.only(left: 15.0, top: 20),
+        padding: const EdgeInsets.only(left: 15.0, top: 28),
         child: TextFormField(
           controller: controller,
           style: TextStyle(
@@ -37,15 +37,15 @@ class AppBarGrid extends StatelessWidget implements PreferredSizeWidget {
             color: Cores.PRETO,
           ),
           onChanged: (value) {
-            if (value.length >= 3) funcaoAtualizar;
+            if (value.length >= 1) funcaoAtualizar;
           },
           decoration: InputDecoration(
-            hintText: validaHint == true ? hintPositivo : hintNegativo,
+            labelText: validaHint == true ? hintPositivo : hintNegativo,
             fillColor: Cores.BRANCO,
             filled: true,
             border: OutlineInputBorder(
               borderSide: BorderSide(color: Cores.PRETO),
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(15.0),
             ),
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
