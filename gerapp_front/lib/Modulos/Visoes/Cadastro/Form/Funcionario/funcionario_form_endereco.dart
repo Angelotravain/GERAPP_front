@@ -1,185 +1,183 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/combo_pesquisavel_cidade.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
-import 'package:gerapp_front/Modulos/modelos/Cadastro/funcionario_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/Funcionario_model.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/endereco_model.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class FuncionarioFormEndereco extends StatefulWidget {
   final FuncionarioModel? bairro;
-  final String? tipoCombo;
-  final TextEditingController? logradourofuncionario;
-  final TextEditingController? cepfuncionario;
-  final TextEditingController? numerofuncionario;
-  final TextEditingController? complemento;
-  final int? funcionarioId;
+  final TextEditingController logradouroFuncionario;
+  final TextEditingController cepFuncionario;
+  final TextEditingController numeroFuncionario;
+  final TextEditingController complemento;
+  final TextEditingController bairroController;
+  final TextEditingController bairroId;
+  final int? FuncionarioId;
   final List<EnderecoModel>? enderecoAdicionado;
 
   const FuncionarioFormEndereco(
       {Key? key,
       this.bairro,
-      this.tipoCombo,
-      this.logradourofuncionario,
-      this.cepfuncionario,
-      this.complemento,
-      this.numerofuncionario,
+      required this.logradouroFuncionario,
+      required this.cepFuncionario,
+      required this.complemento,
+      required this.numeroFuncionario,
       this.enderecoAdicionado,
-      this.funcionarioId})
+      this.FuncionarioId,
+      required this.bairroController,
+      required this.bairroId})
       : super(key: key);
 
   @override
   State<FuncionarioFormEndereco> createState() =>
-      _funcionarioFormEnderecoState();
+      _FuncionarioFormEnderecoState();
 }
 
-class _funcionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
-  Future<BairroModel>? _bairroFuturo;
-  final MultiSelectController _selecionarBairro = MultiSelectController();
-
+class _FuncionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CampoTexto(
-            controller: widget.cepfuncionario!,
-            label: 'CEP',
-            sufix: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Caiu aqui'),
-                      duration: Duration(seconds: 2),
+        body: SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CampoTexto(
+              controller: widget.cepFuncionario!,
+              label: 'CEP',
+              validate: true,
+              sufix: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Caiu aqui'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.search),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            CampoTexto(
+                controller: widget.logradouroFuncionario!,
+                label: 'Logradouro',
+                validate: true),
+            SizedBox(height: 20.0),
+            CampoTexto(controller: widget.numeroFuncionario!, label: 'Número'),
+            SizedBox(height: 20.0),
+            CampoTexto(
+                controller: widget.complemento!,
+                label: 'Complemento',
+                validate: true),
+            SizedBox(height: 20.0),
+            SingleChildScrollView(
+              child: ComboPesquisavel(
+                apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarBairros',
+                controller: widget.bairroController!,
+                identify: 'id',
+                name: 'nome',
+                label: 'Pesquise seu bairro',
+                id: widget.bairroId,
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  if (widget.logradouroFuncionario!.text != '' &&
+                      widget.numeroFuncionario!.text != '' &&
+                      widget.complemento!.text != '' &&
+                      widget.cepFuncionario!.text != '') {
+                    widget.enderecoAdicionado!.add(
+                      EnderecoModel(
+                        id: 0,
+                        logradouro: widget.logradouroFuncionario!.text,
+                        numero: widget.numeroFuncionario!.text,
+                        complemento: widget.complemento!.text,
+                        cep: widget.cepFuncionario!.text,
+                        bairroId: int.parse(widget.bairroId.text),
+                        funcionarioId: widget.FuncionarioId,
+                      ),
+                    );
+                    widget.logradouroFuncionario!.text = '';
+                    widget.numeroFuncionario!.text = '';
+                    widget.complemento!.text = '';
+                    widget.cepFuncionario!.text = '';
+                    widget.bairroController.text = '';
+                  }
+                  ;
+                });
+              },
+              child: Text('Adicionar endereço na lista'),
+            ),
+            SizedBox(height: 20.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.enderecoAdicionado != null
+                    ? widget.enderecoAdicionado!.length
+                    : 0,
+                itemBuilder: (context, index) {
+                  var item = widget.enderecoAdicionado![index];
+                  return Card(
+                    child: ListTile(
+                      title: Text(item.logradouro + item.numero ?? ''),
+                      subtitle: Text(item.complemento),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Card(
+                            child: IconButton(
+                              color: Cores.AZUL_FUNDO,
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                setState(() {
+                                  var selecionado = widget.enderecoAdicionado!
+                                      .elementAt(index);
+                                  widget.cepFuncionario!.text = selecionado.cep;
+                                  widget.logradouroFuncionario!.text =
+                                      selecionado.logradouro;
+                                  widget.numeroFuncionario!.text =
+                                      selecionado.numero;
+                                  widget.complemento!.text =
+                                      selecionado.complemento;
+                                  widget.enderecoAdicionado!.removeAt(index);
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Card(
+                            child: IconButton(
+                              color: Cores.VERMELHO,
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                setState(() {
+                                  widget.enderecoAdicionado!.removeAt(index);
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
-                icon: Icon(Icons.search),
               ),
             ),
-          ),
-          SizedBox(height: 20.0),
-          CampoTexto(
-            controller: widget.logradourofuncionario!,
-            label: 'Logradouro',
-          ),
-          SizedBox(height: 20.0),
-          CampoTexto(controller: widget.numerofuncionario!, label: 'Número'),
-          SizedBox(height: 20.0),
-          CampoTexto(
-            controller: widget.complemento!,
-            label: 'Complemento',
-          ),
-          SizedBox(height: 20.0),
-          widget.bairro != null
-              ? FutureBuilder<BairroModel>(
-                  future: _bairroFuturo,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      print(snapshot.error);
-                      return Text(
-                          'Erro ao carregar bairros: ${snapshot.error}');
-                    } else {
-                      BairroModel bairro = snapshot.data!;
-                      return CustomMultiSelectDropDown(
-                        controller: _selecionarBairro,
-                        localBuscaDados: widget.tipoCombo,
-                        valorEntrada: ValueItem(
-                          label: bairro.nome,
-                          value: bairro.id,
-                        ),
-                      );
-                    }
-                  },
-                )
-              : CustomMultiSelectDropDown(
-                  controller: _selecionarBairro,
-                  valorEntrada: null,
-                  localBuscaDados: widget.tipoCombo,
-                ),
-          SizedBox(height: 20.0),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                widget.enderecoAdicionado!.add(
-                  EnderecoModel(
-                    id: 0,
-                    logradouro: widget.logradourofuncionario!.text,
-                    numero: widget.numerofuncionario!.text,
-                    complemento: widget.complemento!.text,
-                    cep: widget.cepfuncionario!.text,
-                    bairroId: int.parse(_selecionarBairro.options.first.value),
-                    funcionarioId: widget.funcionarioId,
-                  ),
-                );
-                widget.logradourofuncionario!.text = '';
-                widget.numerofuncionario!.text = '';
-                widget.complemento!.text = '';
-                widget.cepfuncionario!.text = '';
-              });
-            },
-            child: Text('Adicionar endereço na lista'),
-          ),
-          SizedBox(height: 20.0),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.enderecoAdicionado!.length,
-              itemBuilder: (context, index) {
-                var item = widget.enderecoAdicionado![index];
-                return Card(
-                  child: ListTile(
-                    title: Text(item.logradouro + item.numero ?? ''),
-                    subtitle: Text(item.complemento),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Card(
-                          child: IconButton(
-                            color: Cores.AZUL_FUNDO,
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              setState(() {
-                                var selecionado =
-                                    widget.enderecoAdicionado!.elementAt(index);
-                                widget.cepfuncionario!.text = selecionado.cep;
-                                widget.logradourofuncionario!.text =
-                                    selecionado.logradouro;
-                                widget.numerofuncionario!.text =
-                                    selecionado.numero;
-                                widget.complemento!.text =
-                                    selecionado.complemento;
-                                widget.enderecoAdicionado!.removeAt(index);
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Card(
-                          child: IconButton(
-                            color: Cores.VERMELHO,
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              setState(() {
-                                widget.enderecoAdicionado!.removeAt(index);
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
+    ));
   }
 }

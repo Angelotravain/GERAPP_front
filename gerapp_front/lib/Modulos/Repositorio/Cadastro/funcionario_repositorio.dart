@@ -29,7 +29,7 @@ class FuncionarioRepositorio {
 
   Future<String> deleteFuncionario(int id) async {
     final response = await http.delete(Uri.parse(
-        '${Local.localName}/api/Gerapp/Cadastro/Excluirfuncionario/$id'));
+        '${Local.localName}/api/Gerapp/Cadastro/Excluirfuncionarios/$id'));
 
     if (response.statusCode == 200) {
       return response.body;

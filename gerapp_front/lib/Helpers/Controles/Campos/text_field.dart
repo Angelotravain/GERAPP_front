@@ -4,12 +4,14 @@ class CampoTexto extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final int? maxLenght;
+  bool? validate = false;
   Widget? sufix;
   CampoTexto(
       {required this.controller,
       required this.label,
       this.sufix,
-      this.maxLenght});
+      this.maxLenght,
+      this.validate});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,13 @@ class CampoTexto extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         maxLength: maxLenght,
+        validator: validate == true
+            ? (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, preencha o campo!';
+                }
+              }
+            : (value) {},
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontFamily: FONTE_PADRAO,

@@ -7,6 +7,7 @@ import 'package:gerapp_front/Helpers/conversor.dart';
 import 'package:gerapp_front/Modulos/Repositorio/Cadastro/funcionario_repositorio.dart';
 import 'package:gerapp_front/Modulos/Visoes/Cadastro/Form/Funcionario/funcionario_form_view.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/funcionario_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/usuario_model.dart';
 
 class FuncionarioGrid extends StatefulWidget {
   const FuncionarioGrid({super.key});
@@ -24,14 +25,15 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
   @override
   void initState() {
     _buscarTodosOsFuncionarios();
+    _pollingBuscarfuncionarios();
   }
 
-  // void _pollingBuscarfuncionarios() {
-  //   const duration = Duration(seconds: 0);
-  //   Timer.periodic(duration, (Timer timer) {
-  //     if (_pesquisa.text != '') _filtrarPorPesquisa(_pesquisa.text);
-  //   });
-  // }
+  void _pollingBuscarfuncionarios() {
+    const duration = Duration(seconds: 3);
+    Timer.periodic(duration, (Timer timer) {
+      _filtrarPorPesquisa(_pesquisa.text);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +51,36 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
             _buscarTodosOsFuncionarios();
           });
         },
-        hintNegativo: 'Sem funcionarios para exibir!',
-        hintPositivo: 'Pesquise seu funcionario!',
+        hintNegativo: 'Sem Funcionarios para exibir!',
+        hintPositivo: 'Pesquise seu Funcionario!',
         validaHint: _filtrados.isNotEmpty,
       ),
       body: ListView.builder(
           itemCount: _filtrados.length,
           itemBuilder: (context, index) {
-            FuncionarioModel funcionario = _filtrados[index];
+            FuncionarioModel Funcionario = _filtrados[index];
             return Card(
               child: ListTile(
-                key: Key(funcionario.id.toString()),
-                leading: funcionario.imagem != ''
+                key: Key(Funcionario.id.toString()),
+                leading: Funcionario.imagem != ''
                     ? CircleAvatar(
                         backgroundImage:
-                            Conversor.convertBase64ToImage(funcionario.imagem),
+                            Conversor.convertBase64ToImage(Funcionario.imagem),
                       )
                     : CircleAvatar(
                         backgroundImage: NetworkImage(
                             'https://cdn-icons-png.flaticon.com/512/1503/1503355.png'),
                       ),
                 title: Text(
-                  funcionario.nome,
+                  Funcionario.nome,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                subtitle: Text(
+                  Funcionario.salario.toString(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -85,22 +95,14 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FuncionarioForm(
-                                      FuncionarioModel(
-                                          id: funcionario.id ?? 0,
-                                          nome: funcionario.nome ?? '',
-                                          salario: funcionario.salario ?? 0,
-                                          cargoId: funcionario.cargoId ?? 0,
-                                          empresaId: funcionario.empresaId ?? 0,
-                                          imagem: funcionario.imagem ?? '',
-                                          usuarioFuncionario:
-                                              funcionario.usuarioFuncionario,
-                                          enderecoFuncionario:
-                                              funcionario.enderecoFuncionario ??
-                                                  [])))).then((value) {
-                            _buscarTodosOsFuncionarios();
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FuncionarioForm(Funcionario)))
+                              .then((value) {
+                            setState(() {
+                              _buscarTodosOsFuncionarios();
+                            });
                           });
                         },
                         icon: Icon(Icons.edit),
@@ -132,7 +134,7 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
                                       Future<String> deleteFuture =
                                           FuncionarioRepositorio()
                                               .deleteFuncionario(
-                                                  funcionario.id!);
+                                                  Funcionario.id!);
                                       showDialog(
                                         barrierColor: Cores.PRETO,
                                         context: context,
@@ -182,10 +184,12 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
   }
 
   void _filtrarPorPesquisa(String filtro) {
-    if (filtro != null && filtro != '') {
+    if (filtro != '') {
       setState(() {
         List<FuncionarioModel> funcionarioFiltrado = _funcionarios
-            .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
+            .where((x) =>
+                x.nome != '' &&
+                x.nome!.toLowerCase().contains(filtro.toLowerCase()))
             .toList();
 
         _filtrados = funcionarioFiltrado;
@@ -198,12 +202,12 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
   }
 
   void _buscarTodosOsFuncionarios() async {
-    List<FuncionarioModel> funcionarios =
+    List<FuncionarioModel>? funcionarios =
         await FuncionarioRepositorio().GetAllFuncionarios();
     setState(() {
-      _funcionarios = funcionarios;
+      _funcionarios = funcionarios ?? [];
       if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = funcionarios;
+        _filtrados = _funcionarios;
       }
     });
   }

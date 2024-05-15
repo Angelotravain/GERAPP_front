@@ -5,21 +5,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gerapp_front/Componentes_gerais/campo_valor_formatado.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/combo_pesquisavel_cidade.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Helpers/conversor.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/cargo_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/empresa_model.dart';
+import 'package:gerapp_front/Modulos/modelos/Cadastro/funcionario_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class FuncionarioPrincipalForm extends StatefulWidget {
   final TextEditingController? nome;
   final TextEditingController? salario;
   final TextEditingController? imagem;
+  final TextEditingController selecionarCargo;
+  final TextEditingController selecionarEmpresa;
+  final TextEditingController idEmpresa;
+  final TextEditingController idCargo;
+  final FuncionarioModel? funcionario;
   DateTime? dataNascimento;
 
-  FuncionarioPrincipalForm({
-    this.nome,
-    this.salario,
-    this.imagem,
-  });
+  FuncionarioPrincipalForm(
+      {this.nome,
+      this.salario,
+      this.imagem,
+      required this.selecionarCargo,
+      required this.selecionarEmpresa,
+      this.funcionario,
+      required this.idCargo,
+      required this.idEmpresa});
 
   @override
   State<FuncionarioPrincipalForm> createState() =>
@@ -27,6 +44,9 @@ class FuncionarioPrincipalForm extends StatefulWidget {
 }
 
 class _funcionarioPrincipalFormState extends State<FuncionarioPrincipalForm> {
+  Future<CargoModel>? _cargoFuturo;
+  Future<EmpresaModel>? _empresaFuturo;
+
   Future<void> getImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -78,9 +98,28 @@ class _funcionarioPrincipalFormState extends State<FuncionarioPrincipalForm> {
               ),
             ],
           ),
-          CampoTexto(controller: widget.nome!, label: 'Nome'),
+          CampoTexto(
+            controller: widget.nome!,
+            label: 'Nome',
+          ),
           CampoValorFormatado(
-              controller: widget.salario!, label: 'Salário', maxLength: 30)
+              controller: widget.salario!, label: 'Salário', maxLength: 30),
+          ComboPesquisavel(
+            apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarCargos',
+            controller: widget.selecionarCargo,
+            identify: 'id',
+            name: 'descricao',
+            label: 'Pesquise seu cargo',
+            id: widget.idCargo,
+          ),
+          ComboPesquisavel(
+            apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarEmpresas',
+            controller: widget.selecionarEmpresa,
+            identify: 'id',
+            name: 'nome',
+            label: 'Pesquise sua empresa',
+            id: widget.idEmpresa,
+          ),
         ],
       ),
     ));

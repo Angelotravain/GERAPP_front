@@ -45,13 +45,8 @@ class FuncionarioModel {
       imagem: map['imagem'] as String ?? '',
       empresaId: map['empresaId'] as int ?? 0,
       cargoId: map['cargoId'] as int ?? 0,
-      usuarioFuncionario: map['usuarioCliente'] != null
-          ? UsuarioModel.fromMap(map['usuarioCliente'] as Map<String, dynamic>)
-          : null,
-      enderecoFuncionario: map['enderecoCliente'] != null
-          ? List<EnderecoModel>.from((map['enderecoCliente'] as List)
-              .map((x) => EnderecoModel.fromMap(x as Map<String, dynamic>)))
-          : null,
+      usuarioFuncionario: map['usuarioCliente'] ?? null,
+      enderecoFuncionario: map['enderecoCliente'] ?? null,
     );
   }
 

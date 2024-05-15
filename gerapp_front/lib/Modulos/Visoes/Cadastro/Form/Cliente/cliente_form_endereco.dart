@@ -106,21 +106,27 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                widget.enderecoAdicionado!.add(
-                  EnderecoModel(
-                    id: 0,
-                    logradouro: widget.logradouroCliente!.text,
-                    numero: widget.numeroCliente!.text,
-                    complemento: widget.complemento!.text,
-                    cep: widget.cepCliente!.text,
-                    bairroId: int.parse(_selecionarBairro.options.first.value),
-                    clienteId: widget.clienteId,
-                  ),
-                );
-                widget.logradouroCliente!.text = '';
-                widget.numeroCliente!.text = '';
-                widget.complemento!.text = '';
-                widget.cepCliente!.text = '';
+                if (widget.logradouroCliente!.text != '' &&
+                    widget.numeroCliente!.text != '' &&
+                    widget.complemento!.text != '' &&
+                    widget.cepCliente!.text != '') {
+                  widget.enderecoAdicionado!.add(
+                    EnderecoModel(
+                      id: 0,
+                      logradouro: widget.logradouroCliente!.text,
+                      numero: widget.numeroCliente!.text,
+                      complemento: widget.complemento!.text,
+                      cep: widget.cepCliente!.text,
+                      bairroId:
+                          int.parse(_selecionarBairro.options.first.value),
+                      clienteId: widget.clienteId,
+                    ),
+                  );
+                  widget.logradouroCliente!.text = '';
+                  widget.numeroCliente!.text = '';
+                  widget.complemento!.text = '';
+                  widget.cepCliente!.text = '';
+                }
               });
             },
             child: Text('Adicionar endereço na lista'),

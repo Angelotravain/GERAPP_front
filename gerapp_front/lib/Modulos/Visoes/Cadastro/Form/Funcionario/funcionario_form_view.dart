@@ -12,6 +12,7 @@ import 'package:gerapp_front/Modulos/modelos/Cadastro/funcionario_model.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/endereco_model.dart';
 import 'package:gerapp_front/Modulos/modelos/Cadastro/usuario_model.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class FuncionarioForm extends StatefulWidget {
   @override
@@ -25,16 +26,20 @@ class FuncionarioForm extends StatefulWidget {
 class _funcionarioFormState extends State<FuncionarioForm> {
   TextEditingController _nomefuncionario = TextEditingController();
   TextEditingController _salariofuncionario = TextEditingController();
-  final TextEditingController? _imagemfuncionario = TextEditingController();
+  TextEditingController _imagemfuncionario = TextEditingController();
   List<EnderecoModel> enderecosFuncionario = [];
-  final TextEditingController? _loginUsuariofuncionario =
-      TextEditingController();
-  final TextEditingController? _senhaUsuariofuncionario =
-      TextEditingController();
-  final TextEditingController? _logradourofuncionario = TextEditingController();
-  final TextEditingController? _cepfuncionario = TextEditingController();
-  final TextEditingController? _numerofuncionario = TextEditingController();
-  final TextEditingController? _complemento = TextEditingController();
+  TextEditingController _loginUsuarioFuncionario = TextEditingController();
+  TextEditingController _senhaUsuarioFuncionario = TextEditingController();
+  TextEditingController _logradouroFuncionario = TextEditingController();
+  TextEditingController _cepFuncionario = TextEditingController();
+  TextEditingController _numeroFuncionario = TextEditingController();
+  TextEditingController _complemento = TextEditingController();
+  TextEditingController _selecionarCargo = TextEditingController();
+  TextEditingController _selecionarEmpresa = TextEditingController();
+  TextEditingController _bairroController = TextEditingController();
+  TextEditingController idEmpresa = TextEditingController();
+  TextEditingController idCargo = TextEditingController();
+  TextEditingController idBairro = TextEditingController();
 
   @override
   void initState() {
@@ -57,16 +62,18 @@ class _funcionarioFormState extends State<FuncionarioForm> {
             FuncionarioRepositorio().salvarEditar(
                 widget.funcionario != null ? 'PUT' : 'POST',
                 _nomefuncionario.text,
-                double.parse(_salariofuncionario.text),
+                double.parse(_salariofuncionario.text.replaceAll('R\$', '')),
                 _imagemfuncionario?.text,
-                0,
-                0,
+                int.parse(idCargo.text),
+                int.parse(idEmpresa.text ?? '0'),
                 enderecosFuncionario,
                 UsuarioModel(
                     id: 0,
-                    login: _loginUsuariofuncionario!.text,
-                    senha: _senhaUsuariofuncionario!.text,
-                    usuarioFuncionarioId: widget.funcionario!.id),
+                    login: _loginUsuarioFuncionario!.text,
+                    senha: _senhaUsuarioFuncionario!.text,
+                    usuarioFuncionarioId: widget.funcionario != null
+                        ? widget.funcionario!.id
+                        : 0),
                 widget.funcionario);
 
             Navigator.pop(context);
@@ -103,25 +110,31 @@ class _funcionarioFormState extends State<FuncionarioForm> {
                 nome: _nomefuncionario,
                 imagem: _imagemfuncionario,
                 salario: _salariofuncionario,
+                selecionarCargo: _selecionarCargo,
+                selecionarEmpresa: _selecionarEmpresa,
+                funcionario: widget.funcionario,
+                idCargo: idCargo,
+                idEmpresa: idEmpresa,
               ),
             ),
             Center(
               child: FuncionarioFormEndereco(
-                tipoCombo: 'B',
-                cepfuncionario: _cepfuncionario,
+                cepFuncionario: _cepFuncionario,
                 complemento: _complemento,
-                logradourofuncionario: _logradourofuncionario,
-                numerofuncionario: _numerofuncionario,
+                logradouroFuncionario: _logradouroFuncionario,
+                numeroFuncionario: _numeroFuncionario,
                 enderecoAdicionado: widget.funcionario != null
                     ? widget.funcionario!.enderecoFuncionario
-                    : [],
-                funcionarioId: widget.funcionario!.id,
+                    : enderecosFuncionario,
+                FuncionarioId: widget.funcionario?.id ?? 0,
+                bairroController: _bairroController,
+                bairroId: idBairro,
               ),
             ),
             Center(
               child: FuncionarioFormUsuario(
-                login: _loginUsuariofuncionario,
-                senha: _senhaUsuariofuncionario,
+                login: _loginUsuarioFuncionario,
+                senha: _senhaUsuarioFuncionario,
               ),
             ),
           ],
@@ -134,12 +147,16 @@ class _funcionarioFormState extends State<FuncionarioForm> {
     if (funcionario != null) {
       _nomefuncionario.text = funcionario.nome;
       _imagemfuncionario!.text = funcionario.imagem;
+      // _selecionarCargo.text = funcionario.cargoId.toString();
+      // _selecionarEmpresa.text = funcionario.empresaId.toString();
       _salariofuncionario.text = funcionario.salario.toString();
+      idCargo.text = funcionario.cargoId.toString();
+      idEmpresa.text = funcionario.empresaId.toString();
       enderecosFuncionario = funcionario.enderecoFuncionario ?? [];
-      _loginUsuariofuncionario?.text = funcionario.usuarioFuncionario != null
+      _loginUsuarioFuncionario?.text = funcionario.usuarioFuncionario != null
           ? funcionario.usuarioFuncionario!.login
           : '';
-      _senhaUsuariofuncionario?.text = funcionario.usuarioFuncionario != null
+      _senhaUsuarioFuncionario?.text = funcionario.usuarioFuncionario != null
           ? funcionario.usuarioFuncionario!.senha
           : '';
     }

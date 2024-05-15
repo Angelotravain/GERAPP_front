@@ -21,6 +21,29 @@ class CustomMultiSelectDropDown extends StatelessWidget {
     if (valorEntrada != null) {
       controller.options.add(valorEntrada!);
     }
+
+    String RetornaHint(String entrada) {
+      if (entrada == 'B')
+        return 'Pesquise seu bairro';
+      else if (entrada == 'C')
+        return 'Pesquise seu cargo';
+      else if (entrada == 'E')
+        return 'Pesquise sua empresa';
+      else
+        return 'Pesquise aqui sua cidade!';
+    }
+
+    String RetornaLink(String entrada) {
+      if (entrada == 'B')
+        return '${Local.localName}/api/Gerapp/Cadastro/ListarBairros';
+      else if (entrada == 'C')
+        return '${Local.localName}/api/Gerapp/Cadastro/ListarCargos';
+      else if (entrada == 'E')
+        return '${Local.localName}/api/Gerapp/Cadastro/ListarEmpresas';
+      else
+        return '${Local.localName}/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0';
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: MultiSelectDropDown.network(
@@ -31,17 +54,11 @@ class CustomMultiSelectDropDown extends StatelessWidget {
         ),
         controller: controller,
         borderRadius: 15.0,
-        hint: localBuscaDados == 'B'
-            ? 'Pesquise seu bairro'
-            : 'Pesquise aqui sua cidade!',
+        hint: RetornaHint(localBuscaDados ?? ''),
         selectionType: SelectionType.single,
-        searchLabel: localBuscaDados == 'B'
-            ? 'Pesquise seu bairro'
-            : 'Pesquise aqui sua cidade!',
+        searchLabel: RetornaHint(localBuscaDados ?? ''),
         networkConfig: NetworkConfig(
-          url: localBuscaDados == 'B'
-              ? '${Local.localName}/api/Gerapp/Cadastro/ListarBairros'
-              : '${Local.localName}/api/Gerapp/Cadastro/ListarCidades?contador=6000&pular=0',
+          url: RetornaLink(localBuscaDados ?? ''),
           method: RequestMethod.get,
           headers: {'Content-Type': 'application/json'},
         ),
@@ -69,7 +86,6 @@ class CustomMultiSelectDropDown extends StatelessWidget {
           controller.options.add(options.first);
           if (options.isNotEmpty) {}
           BairroRepositorio().atualizaCidadeParaEnviar(options.first);
-          // criar um atualizar bairro para enviar o id do bairro
         },
       ),
     );
