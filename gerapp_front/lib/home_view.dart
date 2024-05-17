@@ -2,15 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
-import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
-import 'package:gerapp_front/Helpers/LocalHttp.dart';
-import 'package:gerapp_front/Helpers/generic.dart';
 import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
 import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
-import 'package:gerapp_front/Modulos/modelos/Cadastro/bairro_model.dart';
 
 class paginaPrincipal extends StatefulWidget {
   const paginaPrincipal({super.key});

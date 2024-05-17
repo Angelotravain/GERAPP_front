@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerapp_front/Helpers/Cores/cores.dart';
-import 'package:gerapp_front/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:gerapp_front/Helpers/Cores/cores.dart';
+import 'package:gerapp_front/login_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,6 +44,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const paginaPrincipal();
+    return const LoginForm();
   }
 }

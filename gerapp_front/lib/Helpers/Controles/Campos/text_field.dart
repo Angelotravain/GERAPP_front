@@ -22,6 +22,7 @@ class CampoTexto extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         maxLength: maxLenght,
+        obscureText: validate ?? false,
         validator: validate == true
             ? (value) {
                 if (value == null || value.isEmpty) {
