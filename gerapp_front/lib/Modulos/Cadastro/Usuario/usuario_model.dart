@@ -30,8 +30,8 @@ class UsuarioModel {
       id: map['id'] as int,
       login: map['login'] as String? ?? '',
       senha: map['senha'] as String? ?? '',
-      usuarioClienteId: map['usuarioClienteId'] as int ?? 0,
-      usuarioFuncionarioId: map['usuarioFuncionarioId'] as int ?? 0,
+      usuarioClienteId: map['usuarioClienteId'] as int? ?? 0,
+      usuarioFuncionarioId: map['usuarioFuncionarioId'] as int? ?? 0,
     );
   }
 

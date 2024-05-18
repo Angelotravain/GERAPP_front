@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/montar_lista.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import '../../../Helpers/Controles/entrada/appbar_grid.dart';
 import '../../../Helpers/Cores/cores.dart';
 import '../../../Helpers/conversor.dart';
@@ -53,129 +55,25 @@ class _ClienteGridState extends State<ClienteGrid> {
         hintPositivo: 'Pesquise seu cliente!',
         validaHint: _filtrados.isNotEmpty,
       ),
-      body: ListView.builder(
-          itemCount: _filtrados.length,
-          itemBuilder: (context, index) {
-            ClienteModel cliente = _filtrados[index];
-            return Card(
-              child: ListTile(
-                key: Key(cliente.id.toString()),
-                leading: cliente.imagem != ''
-                    ? CircleAvatar(
-                        backgroundImage:
-                            Conversor.convertBase64ToImage(cliente.imagem),
-                      )
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://cdn-icons-png.flaticon.com/512/1503/1503355.png'),
-                      ),
-                title: Text(
-                  cliente.nome,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                subtitle: Text(
-                  cliente.email,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      color: Cores.AZUL_FUNDO,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ClienteForm(cliente))).then((value) {
-                            setState(() {
-                              _buscarTodosOsClientes();
-                            });
-                          });
-                        },
-                        icon: Icon(Icons.edit),
-                        color: Cores.BRANCO,
-                        tooltip: 'Editar',
-                      ),
-                    ),
-                    Card(
-                      color: Cores.VERMELHO,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirmação'),
-                                content: Text(
-                                    'Tem certeza que deseja excluir este cargo?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Cancelar'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                      Future<String> deleteFuture =
-                                          ClienteRepositorio()
-                                              .deleteCliente(cliente.id!);
-                                      showDialog(
-                                        barrierColor: Cores.PRETO,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Exclusão de Cargo'),
-                                            content: FutureBuilder<String>(
-                                              future: deleteFuture,
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot<String>
-                                                      snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
-                                                } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      'Erro: ${snapshot.error}');
-                                                } else {
-                                                  _buscarTodosOsClientes();
-                                                  return Text(
-                                                      snapshot.data ?? '');
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text('Confirmar'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.delete),
-                        color: Cores.BRANCO,
-                        tooltip: 'Excluir',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
+      body: MontaLista(
+          apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarClientes',
+          controller: _pesquisa,
+          deleteFunction: (p0) {
+            ClienteRepositorio().deleteCliente(p0);
+          },
+          editFunction: (p0) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ClienteForm(ClienteModel.fromMap(p0)))).then((value) {
+              setState(() {
+                _buscarTodosOsClientes();
+              });
+            });
+          },
+          subtitle: 'email',
+          title: 'nome'),
     );
   }
 

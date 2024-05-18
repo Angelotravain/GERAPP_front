@@ -24,6 +24,7 @@ class _ClienteFormUsuarioState extends State<ClienteFormUsuario> {
           SizedBox(height: 20.0),
           CampoTexto(
             controller: widget.senha!,
+            validate: true,
             label: 'Senha',
             sufix: Padding(
               padding: const EdgeInsets.all(8.0),

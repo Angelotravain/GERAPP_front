@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Bairro/bairro_model.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
@@ -17,101 +18,111 @@ class ClienteFormEndereco extends StatefulWidget {
   final int? clienteId;
   final List<EnderecoModel>? enderecoAdicionado;
 
-  const ClienteFormEndereco(
-      {Key? key,
-      this.bairro,
-      this.tipoCombo,
-      this.logradouroCliente,
-      this.cepCliente,
-      this.complemento,
-      this.numeroCliente,
-      this.enderecoAdicionado,
-      this.clienteId})
-      : super(key: key);
+  const ClienteFormEndereco({
+    Key? key,
+    this.bairro,
+    this.tipoCombo,
+    this.logradouroCliente,
+    this.cepCliente,
+    this.complemento,
+    this.numeroCliente,
+    this.enderecoAdicionado,
+    this.clienteId,
+  }) : super(key: key);
 
   @override
   State<ClienteFormEndereco> createState() => _ClienteFormEnderecoState();
 }
 
 class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
-  Future<BairroModel>? _bairroFuturo;
-  final MultiSelectController _selecionarBairro = MultiSelectController();
+  final TextEditingController _bairroController = TextEditingController();
+  final TextEditingController _bairroIdController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CampoTexto(
-            controller: widget.cepCliente!,
-            label: 'CEP',
-            sufix: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Caiu aqui'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                icon: Icon(Icons.search),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CampoTexto(
+              controller: widget.cepCliente!,
+              label: 'CEP',
+              sufix: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Caiu aqui'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.search),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 20.0),
-          CampoTexto(
-            controller: widget.logradouroCliente!,
-            label: 'Logradouro',
-          ),
-          SizedBox(height: 20.0),
-          CampoTexto(controller: widget.numeroCliente!, label: 'Número'),
-          SizedBox(height: 20.0),
-          CampoTexto(
-            controller: widget.complemento!,
-            label: 'Complemento',
-          ),
-          SizedBox(height: 20.0),
-          SizedBox(height: 20.0),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                if (widget.logradouroCliente!.text != '' &&
-                    widget.numeroCliente!.text != '' &&
-                    widget.complemento!.text != '' &&
-                    widget.cepCliente!.text != '') {
-                  widget.enderecoAdicionado!.add(
-                    EnderecoModel(
-                      id: 0,
-                      logradouro: widget.logradouroCliente!.text,
-                      numero: widget.numeroCliente!.text,
-                      complemento: widget.complemento!.text,
-                      cep: widget.cepCliente!.text,
-                      bairroId:
-                          int.parse(_selecionarBairro.options.first.value),
-                      clienteId: widget.clienteId,
-                    ),
-                  );
-                  widget.logradouroCliente!.text = '';
-                  widget.numeroCliente!.text = '';
-                  widget.complemento!.text = '';
-                  widget.cepCliente!.text = '';
-                }
-              });
-            },
-            child: Text('Adicionar endereço na lista'),
-          ),
-          SizedBox(height: 20.0),
-          Expanded(
-            child: ListView.builder(
+            SizedBox(height: 20.0),
+            CampoTexto(
+              controller: widget.logradouroCliente!,
+              label: 'Logradouro',
+            ),
+            SizedBox(height: 20.0),
+            CampoTexto(controller: widget.numeroCliente!, label: 'Número'),
+            SizedBox(height: 20.0),
+            CampoTexto(
+              controller: widget.complemento!,
+              label: 'Complemento',
+            ),
+            SizedBox(height: 20.0),
+            ComboPesquisavel(
+              apiUrl: Local.URL_BAIRRO,
+              controller: _bairroController,
+              name: 'nome',
+              identify: 'id',
+              label: 'Pesquise seu bairro',
+              id: _bairroIdController,
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  if (widget.logradouroCliente!.text.isNotEmpty &&
+                      widget.numeroCliente!.text.isNotEmpty &&
+                      widget.complemento!.text.isNotEmpty &&
+                      widget.cepCliente!.text.isNotEmpty) {
+                    widget.enderecoAdicionado!.add(
+                      EnderecoModel(
+                        id: 0,
+                        logradouro: widget.logradouroCliente!.text,
+                        numero: widget.numeroCliente!.text,
+                        complemento: widget.complemento!.text,
+                        cep: widget.cepCliente!.text,
+                        bairroId: int.parse(_bairroIdController.text),
+                        clienteId: widget.clienteId,
+                      ),
+                    );
+                    widget.logradouroCliente!.clear();
+                    widget.numeroCliente!.clear();
+                    widget.complemento!.clear();
+                    widget.cepCliente!.clear();
+                    _bairroController.clear();
+                    _bairroIdController.clear();
+                  }
+                });
+              },
+              child: Text('Adicionar endereço na lista'),
+            ),
+            SizedBox(height: 20.0),
+            ListView.builder(
+              shrinkWrap: true,
               itemCount: widget.enderecoAdicionado!.length,
               itemBuilder: (context, index) {
                 var item = widget.enderecoAdicionado![index];
                 return Card(
                   child: ListTile(
-                    title: Text(item.logradouro + item.numero ?? ''),
+                    title: Text(item.logradouro + item.numero),
                     subtitle: Text(item.complemento),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -130,6 +141,10 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                                 widget.numeroCliente!.text = selecionado.numero;
                                 widget.complemento!.text =
                                     selecionado.complemento;
+                                _bairroIdController.text =
+                                    selecionado.bairroId.toString();
+                                _bairroController.text =
+                                    selecionado.bairroId.toString();
                                 widget.enderecoAdicionado!.removeAt(index);
                               });
                             },
@@ -153,8 +168,8 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -22,14 +22,14 @@ class ClienteForm extends StatefulWidget {
 class _ClienteFormState extends State<ClienteForm> {
   TextEditingController _nomeCliente = TextEditingController();
   TextEditingController _cpfCliente = TextEditingController();
-  DateTime? _dataNascimento;
+  DateTime _dataNascimento = DateTime.now();
   TextEditingController _emailCliente = TextEditingController();
   TextEditingController _telefoneCliente = TextEditingController();
   TextEditingController _nomeMae = TextEditingController();
   bool _statusCliente = true;
   TextEditingController _nomePai = TextEditingController();
   TextEditingController _nomeConjugue = TextEditingController();
-  final TextEditingController _imagemCliente = TextEditingController();
+  TextEditingController _imagemCliente = TextEditingController();
   List<EnderecoModel> enderecosCliente = [];
   TextEditingController _loginUsuarioCliente = TextEditingController();
   TextEditingController _senhaUsuarioCliente = TextEditingController();
@@ -41,7 +41,12 @@ class _ClienteFormState extends State<ClienteForm> {
   @override
   void initState() {
     super.initState();
-    PreencherCampos(widget.cliente);
+    if (widget.cliente != null) {
+      print("Cliente não é nulo: ${widget.cliente}");
+      PreencherCampos(widget.cliente!);
+    } else {
+      print("Cliente é nulo");
+    }
   }
 
   @override
@@ -73,8 +78,7 @@ class _ClienteFormState extends State<ClienteForm> {
                     id: widget.cliente?.usuario!.id ?? 0,
                     login: _loginUsuarioCliente.text,
                     senha: _senhaUsuarioCliente.text,
-                    usuarioClienteId: widget.cliente?.id ??
-                        0, // Fornece 0 como valor padrão se cliente for nulo
+                    usuarioClienteId: widget.cliente?.id ?? 0,
                   ),
                   widget.cliente,
                 )
@@ -129,8 +133,7 @@ class _ClienteFormState extends State<ClienteForm> {
                 complemento: _complemento,
                 logradouroCliente: _logradouroCliente,
                 numeroCliente: _numeroCliente,
-                enderecoAdicionado:
-                    widget.cliente?.endereco ?? enderecosCliente,
+                enderecoAdicionado: enderecosCliente,
                 clienteId: widget.cliente?.id ??
                     0, // Fornece 0 como valor padrão se cliente for nulo
               ),
@@ -148,7 +151,9 @@ class _ClienteFormState extends State<ClienteForm> {
   }
 
   void PreencherCampos(ClienteModel? cliente) {
+    enderecosCliente = [];
     if (cliente != null) {
+      print("Preenchendo campos para o cliente: $cliente");
       _nomeCliente.text = cliente.nome ?? '';
       _cpfCliente.text = cliente.cpf ?? '';
       _dataNascimento = cliente.dataNascimento ?? DateTime.now();
@@ -159,11 +164,11 @@ class _ClienteFormState extends State<ClienteForm> {
       _nomePai.text = cliente.nomePai ?? '';
       _nomeConjugue.text = cliente.nomeConjugue ?? '';
       _imagemCliente.text = cliente.imagem ?? '';
-      enderecosCliente = cliente.endereco!;
-      _loginUsuarioCliente.text = cliente.usuario?.login ??
-          ''; // Fornece uma string vazia como valor padrão se cliente.usuario for nulo
-      _senhaUsuarioCliente.text = cliente.usuario?.senha ??
-          ''; // Fornece uma string vazia como valor padrão se cliente.usuario for nulo
+      enderecosCliente = cliente.endereco ?? [];
+      _loginUsuarioCliente.text = cliente.usuario?.login ?? '';
+      _senhaUsuarioCliente.text = cliente.usuario?.senha ?? '';
+    } else {
+      print("Cliente é nulo em PreencherCampos");
     }
   }
 }
