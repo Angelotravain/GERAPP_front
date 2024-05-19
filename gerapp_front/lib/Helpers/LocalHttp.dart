@@ -6,7 +6,9 @@ class Local {
   static String URL_VEICULO =
       '${localName}/api/Gerapp/Locacao/Veiculo/ListarTodos';
   static String URL_SALVAR_VEICULO =
-      'https://localhost:7009/api/Gerapp/Locacao/Veiculo/Salvar';
+      '${localName}/api/Gerapp/Locacao/Veiculo/Salvar';
   static String URL_EDITAR_VEICULO =
-      'https://localhost:7009/api/Gerapp/Locacao/Veiculo/Atualizar';
+      '${localName}/api/Gerapp/Locacao/Veiculo/Atualizar';
+  static String URL_TIPO_EQUIPAMENTO_LISTA =
+      '${localName}/api/Gerapp/Locacao/TipoEquipamento/ListarTodos';
 }

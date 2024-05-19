@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Modulos/Cadastro/TipoEquipamento/tipo_equipamento_grid_view.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Veiculo/veiculo_grid_view.dart';
 
 class LocacaoMenu extends StatelessWidget {
@@ -21,7 +22,10 @@ class LocacaoMenu extends StatelessWidget {
             title: Text('Tipos de equipamentos'),
             leading: Icon(Icons.chair),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TipoEquipamentoGrid()));
             },
           ),
           ListTile(
