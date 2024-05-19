@@ -8,14 +8,14 @@ import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
 
-class paginaPrincipal extends StatefulWidget {
-  const paginaPrincipal({super.key});
+class PaginaPrincipal extends StatefulWidget {
+  const PaginaPrincipal({super.key});
 
   @override
-  State<paginaPrincipal> createState() => _paginaPrincipalState();
+  State<PaginaPrincipal> createState() => _paginaPrincipalState();
 }
 
-class _paginaPrincipalState extends State<paginaPrincipal> {
+class _paginaPrincipalState extends State<PaginaPrincipal> {
   final bool validaAppBar = true;
   bool _acessaAuditoria = false;
 

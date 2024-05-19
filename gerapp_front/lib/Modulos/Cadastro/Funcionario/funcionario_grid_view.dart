@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/montar_lista.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Helpers/conversor.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_repositorio.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_form_view.dart';
@@ -28,8 +30,9 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
   }
 
   void _pollingBuscarfuncionarios() {
-    const duration = Duration(seconds: 3);
+    const duration = Duration(seconds: 0);
     Timer.periodic(duration, (Timer timer) {
+      _buscarTodosOsFuncionarios();
       _filtrarPorPesquisa(_pesquisa.text);
     });
   }
@@ -54,131 +57,27 @@ class _funcionarioGridState extends State<FuncionarioGrid> {
         hintPositivo: 'Pesquise seu Funcionario!',
         validaHint: _filtrados.isNotEmpty,
       ),
-      body: ListView.builder(
-          itemCount: _filtrados.length,
-          itemBuilder: (context, index) {
-            FuncionarioModel Funcionario = _filtrados[index];
-            return Card(
-              child: ListTile(
-                key: Key(Funcionario.id.toString()),
-                leading: Funcionario.imagem != ''
-                    ? CircleAvatar(
-                        backgroundImage:
-                            Conversor.convertBase64ToImage(Funcionario.imagem),
-                      )
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://cdn-icons-png.flaticon.com/512/1503/1503355.png'),
-                      ),
-                title: Text(
-                  Funcionario.nome,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                subtitle: Text(
-                  Funcionario.salario.toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      color: Cores.AZUL_FUNDO,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          FuncionarioForm(Funcionario)))
-                              .then((value) {
-                            setState(() {
-                              _buscarTodosOsFuncionarios();
-                            });
-                          });
-                        },
-                        icon: Icon(Icons.edit),
-                        color: Cores.BRANCO,
-                        tooltip: 'Editar',
-                      ),
-                    ),
-                    Card(
-                      color: Cores.VERMELHO,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirmação'),
-                                content: Text(
-                                    'Tem certeza que deseja excluir este cargo?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Cancelar'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                      Future<String> deleteFuture =
-                                          FuncionarioRepositorio()
-                                              .deleteFuncionario(
-                                                  Funcionario.id!);
-                                      showDialog(
-                                        barrierColor: Cores.PRETO,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Exclusão de Cargo'),
-                                            content: FutureBuilder<String>(
-                                              future: deleteFuture,
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot<String>
-                                                      snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
-                                                } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      'Erro: ${snapshot.error}');
-                                                } else {
-                                                  _buscarTodosOsFuncionarios();
-                                                  return Text(
-                                                      snapshot.data ?? '');
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text('Confirmar'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.delete),
-                        color: Cores.BRANCO,
-                        tooltip: 'Excluir',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
+      body: MontaLista(
+        apiUrl: Local.URL_FUNCIONARIO,
+        controller: _pesquisa,
+        deleteFunction: (p0) {
+          FuncionarioRepositorio().deleteFuncionario(p0);
+        },
+        editFunction: (p0) {
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FuncionarioForm(FuncionarioModel.fromMap(p0))))
+              .then((value) {
+            setState(() {
+              _buscarTodosOsFuncionarios();
+            });
+          });
+        },
+        title: 'nome',
+        subtitle: '',
+      ),
     );
   }
 

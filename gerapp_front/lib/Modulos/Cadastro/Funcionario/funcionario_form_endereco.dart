@@ -52,7 +52,6 @@ class _FuncionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
             CampoTexto(
               controller: widget.cepFuncionario!,
               label: 'CEP',
-              validate: true,
               sufix: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
@@ -70,16 +69,11 @@ class _FuncionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
             ),
             SizedBox(height: 20.0),
             CampoTexto(
-                controller: widget.logradouroFuncionario!,
-                label: 'Logradouro',
-                validate: true),
+                controller: widget.logradouroFuncionario!, label: 'Logradouro'),
             SizedBox(height: 20.0),
             CampoTexto(controller: widget.numeroFuncionario!, label: 'Número'),
             SizedBox(height: 20.0),
-            CampoTexto(
-                controller: widget.complemento!,
-                label: 'Complemento',
-                validate: true),
+            CampoTexto(controller: widget.complemento!, label: 'Complemento'),
             SizedBox(height: 20.0),
             SingleChildScrollView(
               child: ComboPesquisavel(

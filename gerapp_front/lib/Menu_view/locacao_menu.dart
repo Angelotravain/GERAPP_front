@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Veiculo/veiculo_grid_view.dart';
 
 class LocacaoMenu extends StatelessWidget {
   const LocacaoMenu({super.key});
@@ -34,7 +35,8 @@ class LocacaoMenu extends StatelessWidget {
             title: Text('Veículos'),
             leading: Icon(Icons.car_rental),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => veiculoGrid()));
             },
           ),
         ],

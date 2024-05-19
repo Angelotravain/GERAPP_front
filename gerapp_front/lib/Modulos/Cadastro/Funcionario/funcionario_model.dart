@@ -32,9 +32,9 @@ class FuncionarioModel {
       'imagem': imagem,
       'empresaId': empresaId,
       'cargoId': cargoId,
-      'usuarioFuncionario': usuarioFuncionario!.toMap(),
+      'usuarioFuncionario': usuarioFuncionario?.toMap() ?? null,
       'enderecoFuncionario':
-          enderecoFuncionario!.map((x) => x.toMap()).toList(),
+          enderecoFuncionario?.map((x) => x.toMap()).toList() ?? null,
     };
   }
 
@@ -46,8 +46,16 @@ class FuncionarioModel {
       imagem: map['imagem'] as String ?? '',
       empresaId: map['empresaId'] as int ?? 0,
       cargoId: map['cargoId'] as int ?? 0,
-      usuarioFuncionario: map['usuarioCliente'] ?? null,
-      enderecoFuncionario: map['enderecoCliente'] ?? null,
+      usuarioFuncionario: map['usuarioFuncionario'] != null
+          ? UsuarioModel.fromMap(
+              map['usuarioFuncionario'] as Map<String, dynamic>)
+          : null,
+      enderecoFuncionario: map['enderecoFuncionario'] != null
+          ? List<EnderecoModel>.from(
+              (map['enderecoFuncionario'] as List<dynamic>).map(
+              (x) => EnderecoModel.fromMap(x as Map<String, dynamic>),
+            ))
+          : null,
     );
   }
 

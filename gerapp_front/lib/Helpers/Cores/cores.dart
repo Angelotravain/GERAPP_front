@@ -7,4 +7,5 @@ class Cores {
   static const Color PRETO = Colors.black;
   static const Color VERMELHO = Colors.redAccent;
   static const Color VERDE = Colors.greenAccent;
+  static const Color AMARELO = Color.fromARGB(255, 253, 228, 9);
 }
