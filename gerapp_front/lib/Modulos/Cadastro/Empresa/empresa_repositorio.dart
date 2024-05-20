@@ -1,25 +1,20 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
-
 import '../../../Helpers/LocalHttp.dart';
 import 'empresa_model.dart';
 import 'empresa_model_novo.dart';
 
-ValueItem cidadeSelecionada = ValueItem(label: '', value: 0);
-
 class EmpresaRepositorio {
+  static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
+
   Future<List<EmpresaModel>> GetAllEmpresas() async {
-    final response = await http.get(
-        Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ListarEmpresas'));
+    final response = await http.get(Uri.parse('$baseUrl/ListarEmpresas'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
-      List<EmpresaModel> empresas = jsonData
-          .map((e) => EmpresaModel.fromJson(json.encode(e) as String))
-          .toList();
+      List<EmpresaModel> empresas =
+          jsonData.map((e) => EmpresaModel.fromJson(e)).toList();
 
       return empresas;
     } else {
@@ -28,8 +23,8 @@ class EmpresaRepositorio {
   }
 
   Future<String> deleteEmpresa(int id) async {
-    final response = await http.delete(Uri.parse(
-        '${Local.localName}/api/Gerapp/Cadastro/ExcluirEmpresas/$id'));
+    final response =
+        await http.delete(Uri.parse('$baseUrl/ExcluirEmpresas/$id'));
 
     if (response.statusCode == 200) {
       return response.body;
@@ -39,11 +34,6 @@ class EmpresaRepositorio {
     }
   }
 
-  void atualizaCidadeParaEnviar(ValueItem first) {
-    cidadeSelecionada = first;
-  }
-
-  static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
   Future<void> salvarEditar(
     String tipo,
     String nome,
@@ -67,12 +57,12 @@ class EmpresaRepositorio {
         : '';
 
     final empresaModel = EmpresaModelNovo(
-      id: empresa!.id ?? 0,
+      id: empresa != null ? empresa!.id : 0,
       nome: nome,
       logoEmpresa: logoEmpresa!,
       cnpj: cnpjEmpresa!,
       dataCadastro: DateTime.now(),
-      dataFundacao: dataFundacaoEmpresa!,
+      dataFundacao: DateTime.parse(formattedDataFundacao),
       ehFilial: ehFilial!,
       email: emailEmpresa!,
       enderecoEmpresa: enderecoEmpresa,
@@ -85,17 +75,24 @@ class EmpresaRepositorio {
     );
 
     final url = Uri.parse(
-        '$baseUrl${tipo == 'PUT' ? 'AtualizarEmpresas/${empresa?.id}' : 'SalvarEmpresas'}');
+        '$baseUrl${tipo == 'PUT' ? 'AtualizarEmpresas/${empresa!.id}' : 'SalvarEmpresas'}');
 
     try {
-      print(empresaModel.toJson());
       final response = await (tipo == 'PUT'
-          ? http.put(headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8'
-            }, url, body: jsonEncode(empresaModel.toJson()))
-          : http.post(headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8'
-            }, url, body: jsonEncode(empresaModel.toJson())));
+          ? http.put(
+              url,
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8'
+              },
+              body: jsonEncode(empresaModel.toJson()),
+            )
+          : http.post(
+              url,
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8'
+              },
+              body: jsonEncode(empresaModel.toJson()),
+            ));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Resposta da API: ${response.body}');

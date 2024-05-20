@@ -11,4 +11,6 @@ class Local {
       '${localName}/api/Gerapp/Locacao/Veiculo/Atualizar';
   static String URL_TIPO_EQUIPAMENTO_LISTA =
       '${localName}/api/Gerapp/Locacao/TipoEquipamento/ListarTodos';
+  static String BUSCA_CEP =
+      'https://localhost:7009/api/v1/BuscarCep/BuscarCep/';
 }

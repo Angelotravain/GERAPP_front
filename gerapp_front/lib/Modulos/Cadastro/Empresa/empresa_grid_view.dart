@@ -16,60 +16,13 @@ class EmpresaGrid extends StatefulWidget {
 }
 
 class _EmpresaGridState extends State<EmpresaGrid> {
-  void atualizarEstado() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _buscarTodosOsempresas();
-    //_pollingBuscarempresas();
-  }
-
   TextEditingController _pesquisa = TextEditingController();
-  List<EmpresaModel> _empresas = [];
-  List<EmpresaModel> _filtrados = [];
-
-  void _buscarTodosOsempresas() async {
-    List<EmpresaModel> empresas = await EmpresaRepositorio().GetAllEmpresas();
-    if (mounted) {
-      setState(() {
-        _empresas = empresas;
-        if (_filtrados.isEmpty && _pesquisa.text == '') {
-          _filtrados = empresas;
-        }
-      });
-    }
-  }
-
-  void _pollingBuscarempresas() {
-    const duration = Duration(seconds: 0);
-    Timer.periodic(duration, (Timer timer) {
-      if (mounted) {
-        _buscarTodosOsempresas();
-        _filtrarPorPesquisa(_pesquisa.text);
-      }
-    });
-  }
 
   void _filtrarPorPesquisa(String filtro) {
-    if (filtro != null || filtro != '') {
+    if (filtro != '') {
       setState(() {
-        List<EmpresaModel> empresaFiltrado = _empresas
-            .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
-            .toList();
-
-        _filtrados = empresaFiltrado;
+        _pesquisa.text = filtro;
       });
-    } else {
-      if (mounted) {
-        setState(() {
-          _filtrados = _empresas;
-        });
-      }
     }
   }
 
@@ -82,9 +35,9 @@ class _EmpresaGridState extends State<EmpresaGrid> {
               context,
               MaterialPageRoute(builder: (context) => EmpresaForm(null)),
             ).then((value) {
-              if (mounted) {
-                _buscarTodosOsempresas();
-              }
+              setState(() {
+                _pesquisa.text = '';
+              });
             });
           },
           funcaoAtualizar: () {
@@ -92,7 +45,7 @@ class _EmpresaGridState extends State<EmpresaGrid> {
               _filtrarPorPesquisa(_pesquisa.text);
             }
           },
-          validaHint: _filtrados.isNotEmpty,
+          validaHint: true,
           hintPositivo: 'Pesquise seu empresa!',
           hintNegativo: 'Sem empresas!',
           controller: _pesquisa,
@@ -111,9 +64,9 @@ class _EmpresaGridState extends State<EmpresaGrid> {
               MaterialPageRoute(
                   builder: (context) => EmpresaForm(EmpresaModel.fromMap(p0))),
             ).then((value) {
-              if (mounted) {
-                _buscarTodosOsempresas();
-              }
+              setState(() {
+                _pesquisa.text = '';
+              });
             });
           },
         ));

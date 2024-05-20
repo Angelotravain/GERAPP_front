@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
+import 'package:gerapp_front/Helpers/bucacep.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
@@ -52,12 +53,10 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Caiu aqui'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    setState(() {
+                      CepService().preencherDadosCep(widget.cepCliente!,
+                          widget.logradouroCliente!, widget.complemento!);
+                    });
                   },
                   icon: Icon(Icons.search),
                 ),

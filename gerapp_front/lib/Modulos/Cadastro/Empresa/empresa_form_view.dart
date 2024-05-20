@@ -38,13 +38,11 @@ class _empresaFormState extends State<EmpresaForm> {
   TextEditingController _numeroempresa = TextEditingController();
 
   bool? _ehFilialEmpresa = false;
-  late EnderecoModel enderecosempresa = EnderecoModel(
-      id: 0, logradouro: '', numero: '', complemento: '', cep: '', bairroId: 0);
 
   @override
   void initState() {
     super.initState();
-    PreencherCampos(widget.empresa);
+    if (widget.empresa != null) PreencherCampos(widget.empresa);
   }
 
   @override
@@ -58,21 +56,6 @@ class _empresaFormState extends State<EmpresaForm> {
               ? 'Edite seu empresa!'
               : 'Cadastre seu empresa!',
           funcaoSalvar: () {
-            int estadoId = 0;
-            int numeroFuncionarios = 0;
-
-            try {
-              estadoId = int.parse(_estadoIdEmpresa.text);
-            } catch (e) {
-              print('Erro ao converter estadoId: $e');
-            }
-
-            try {
-              numeroFuncionarios = int.parse(_numeroFuncionariosEmpresa.text);
-            } catch (e) {
-              print('Erro ao converter numeroFuncionarios: $e');
-            }
-
             EmpresaRepositorio()
                 .salvarEditar(
                   widget.empresa != null ? 'PUT' : 'POST',
@@ -83,22 +66,36 @@ class _empresaFormState extends State<EmpresaForm> {
                   _ehFilialEmpresa,
                   _emailEmpresa.text,
                   Endereco(
-                    id: widget.empresa?.endereco?.id ?? 0,
+                    id: widget.empresa != null
+                        ? widget.empresa!.endereco!.id
+                        : 0,
                     logradouro: _logradouroempresa.text,
                     numero: _numeroempresa.text,
                     complemento: _complemento.text,
                     cep: _cepEmpresa.text,
-                    bairroId: int.parse(_estadoIdEmpresa.text) ?? 0,
-                    empresaId: widget.empresa?.id ?? 0,
+                    bairroId: _estadoIdEmpresa.text.isNotEmpty
+                        ? int.parse(_estadoIdEmpresa.text)
+                        : 0,
+                    empresaId: widget.empresa != null
+                        ? widget.empresa!.endereco!.id
+                        : 0,
                     funcionarioId: 0,
                     clienteId: 0,
                   ),
-                  estadoId,
-                  numeroFuncionarios,
-                  _proprietarioEmpresa.text,
-                  _ramoAtuacaoEmpresa.text,
-                  _telefoneEmpresa.text,
-                  _webSiteEmpresa.text,
+                  _estadoIdEmpresa.text.isNotEmpty
+                      ? int.parse(_estadoIdEmpresa.text)
+                      : 0,
+                  _numeroFuncionariosEmpresa.text.isNotEmpty
+                      ? int.parse(_numeroFuncionariosEmpresa.text)
+                      : 0,
+                  _proprietarioEmpresa.text.isNotEmpty
+                      ? _proprietarioEmpresa.text
+                      : null,
+                  _ramoAtuacaoEmpresa.text.isNotEmpty
+                      ? _ramoAtuacaoEmpresa.text
+                      : null,
+                  _telefoneEmpresa.text.isNotEmpty ? _telefoneEmpresa.text : '',
+                  _webSiteEmpresa.text.isNotEmpty ? _webSiteEmpresa.text : null,
                   widget.empresa,
                 )
                 .then((value) => Navigator.pop(context));
@@ -162,24 +159,25 @@ class _empresaFormState extends State<EmpresaForm> {
   void PreencherCampos(EmpresaModel? empresa) {
     if (empresa != null) {
       _cnpjEmpresa.text = empresa.cnpj ?? '';
-      _dataFundacaoEmpresa = empresa.dataFundacao! ?? '';
+      _dataFundacaoEmpresa = empresa.dataFundacao ?? '';
       _ehFilialEmpresa = empresa.ehFilial ?? false;
-      _nomeEmpresa.text = empresa.nome ?? '';
+      _nomeEmpresa.text = empresa.nome;
       _emailEmpresa.text = empresa.email ?? '';
-      _numeroFuncionariosEmpresa.text = empresa.numeroFuncionarios.toString();
+      _numeroFuncionariosEmpresa.text =
+          empresa.numeroFuncionarios?.toString() ?? '';
       _estadoIdEmpresa.text = empresa.estadoId.toString();
       _logoEmpresa.text = empresa.logoEmpresa ?? '';
       _proprietarioEmpresa.text = empresa.proprietario ?? '';
       _ramoAtuacaoEmpresa.text = empresa.ramoAtuacao ?? '';
       _telefoneEmpresa.text = empresa.telefone ?? '';
       _webSiteEmpresa.text = empresa.webSite ?? '';
-      _cepEmpresa.text = empresa.endereco!.cep ?? '';
-      _complemento.text = empresa.endereco!.complemento ?? '';
-      _bairroEmpresa.text = empresa.endereco!.bairroId.toString();
+      _cepEmpresa.text = empresa.endereco?.cep ?? '';
+      _complemento.text = empresa.endereco?.complemento ?? '';
+      _bairroEmpresa.text = empresa.endereco?.bairroId.toString() ?? '';
       _estadoEmpresa.text = '';
-      _estadoIdEmpresa.text = empresa.estadoId.toString() ?? '0';
-      _logradouroempresa.text = empresa.endereco!.logradouro ?? '';
-      _numeroempresa.text = empresa.endereco!.numero ?? '';
+      _estadoIdEmpresa.text = empresa.estadoId.toString();
+      _logradouroempresa.text = empresa.endereco?.logradouro ?? '';
+      _numeroempresa.text = empresa.endereco?.numero ?? '';
     }
   }
 }

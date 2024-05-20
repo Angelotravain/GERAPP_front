@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
+import 'package:gerapp_front/Helpers/bucacep.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model.dart';
 
 import '../../../Helpers/Controles/entrada/novo_combo.dart';
@@ -48,12 +49,10 @@ class _EmpresaFormEnderecoState extends State<EmpresaFormEndereco> {
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Caiu aqui'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    setState(() {
+                      CepService().preencherDadosCep(widget.cepEmpresa!,
+                          widget.logradouroEmpresa!, widget.complemento!);
+                    });
                   },
                   icon: Icon(Icons.search),
                 ),

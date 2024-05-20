@@ -8,7 +8,7 @@ class EmpresaModel {
   final int id;
   final String nome;
   final String? cnpj;
-  final int estadoId; // Alterado para int
+  final int estadoId;
   final String telefone;
   final String? email;
   final String? webSite;
@@ -29,7 +29,7 @@ class EmpresaModel {
     required this.telefone,
     this.email,
     this.webSite,
-    required this.dataFundacao,
+    this.dataFundacao,
     this.ramoAtuacao,
     this.numeroFuncionarios,
     this.proprietario,
@@ -44,12 +44,11 @@ class EmpresaModel {
       'id': id,
       'nome': nome,
       'cnpj': cnpj,
-      'estadoId': estadoId, // Alterado para int
+      'estadoId': estadoId,
       'telefone': telefone,
       'email': email,
       'webSite': webSite,
-      'dataFundacao':
-          DateFormat('dd/MM/yyyy').format(DateTime.parse(dataFundacao!)),
+      'dataFundacao': dataFundacao,
       'ramoAtuacao': ramoAtuacao,
       'numeroFuncionarios': numeroFuncionarios,
       'proprietario': proprietario,
@@ -69,7 +68,7 @@ class EmpresaModel {
       telefone: map['telefone'] as String? ?? '',
       email: map['email'] as String?,
       webSite: map['webSite'] as String?,
-      dataFundacao: DateTime.parse(map['dataFundacao']).toIso8601String(),
+      dataFundacao: map['dataFundacao'] as String?,
       ramoAtuacao: map['ramoAtuacao'] as String?,
       numeroFuncionarios: map['numeroFuncionarios'] as int?,
       proprietario: map['proprietario'] as String?,
