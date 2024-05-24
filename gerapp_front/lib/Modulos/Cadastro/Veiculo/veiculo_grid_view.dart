@@ -1,9 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/montar_lista.dart';
-import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Veiculo/veiculo_form_view.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Veiculo/veiculo_model.dart';
@@ -18,23 +15,9 @@ class veiculoGrid extends StatefulWidget {
 
 class _veiculoGridState extends State<veiculoGrid> {
   TextEditingController _pesquisa = TextEditingController();
-  List<VeiculoModel> _veiculos = [];
-  List<VeiculoModel> _filtrados = [];
-  String? image = '';
 
   @override
-  void initState() {
-    _buscarTodosOsveiculos();
-    // _pollingBuscarveiculos();
-  }
-
-  void _pollingBuscarveiculos() {
-    const duration = Duration(seconds: 0);
-    Timer.periodic(duration, (Timer timer) {
-      _buscarTodosOsveiculos();
-      _filtrarPorPesquisa(_pesquisa.text);
-    });
-  }
+  void initState() {}
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +25,7 @@ class _veiculoGridState extends State<veiculoGrid> {
       appBar: AppBarGrid(
         controller: _pesquisa,
         funcaoAtualizar: () {
-          _filtrarPorPesquisa(_pesquisa.text);
+          _pesquisa.text = '';
         },
         funcaoRota: () {
           Navigator.push(
@@ -51,12 +34,12 @@ class _veiculoGridState extends State<veiculoGrid> {
                   builder: (context) => VeiculoForm(
                         veiculo: null,
                       ))).then((value) {
-            _buscarTodosOsveiculos();
+            _pesquisa.text = '';
           });
         },
         hintNegativo: 'Sem veiculos para exibir!',
         hintPositivo: 'Pesquise seu veiculo!',
-        validaHint: _filtrados.isNotEmpty,
+        validaHint: true,
       ),
       body: MontaLista(
         apiUrl: Local.URL_VEICULO,
@@ -72,7 +55,7 @@ class _veiculoGridState extends State<veiculoGrid> {
                         veiculo: VeiculoModel.fromJson(p0),
                       ))).then((value) {
             setState(() {
-              _buscarTodosOsveiculos();
+              _pesquisa.text = '';
             });
           });
         },
@@ -80,33 +63,5 @@ class _veiculoGridState extends State<veiculoGrid> {
         subtitle: 'marca',
       ),
     );
-  }
-
-  void _filtrarPorPesquisa(String filtro) {
-    if (filtro != '') {
-      setState(() {
-        List<VeiculoModel> veiculoFiltrado = _veiculos
-            .where((x) =>
-                x.modelo != '' &&
-                x.modelo!.toLowerCase().contains(filtro.toLowerCase()))
-            .toList();
-
-        _filtrados = veiculoFiltrado;
-      });
-    } else {
-      setState(() {
-        _filtrados = _veiculos;
-      });
-    }
-  }
-
-  void _buscarTodosOsveiculos() async {
-    List<VeiculoModel>? veiculos = await VeiculoRepositorio().getAllVeiculos();
-    setState(() {
-      _veiculos = veiculos ?? [];
-      if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = _veiculos;
-      }
-    });
   }
 }

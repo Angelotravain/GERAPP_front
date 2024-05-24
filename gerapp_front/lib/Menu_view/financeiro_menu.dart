@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Modulos/Cadastro/formaDePagamento/forma_pagamento_grid_view.dart';
 
 class FinanceiroMenu extends StatelessWidget {
   const FinanceiroMenu({super.key});
@@ -20,7 +21,10 @@ class FinanceiroMenu extends StatelessWidget {
             title: Text('Formas de pagamento'),
             leading: Icon(Icons.monetization_on),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FormaPagamentoGrid()));
             },
           ),
         ],

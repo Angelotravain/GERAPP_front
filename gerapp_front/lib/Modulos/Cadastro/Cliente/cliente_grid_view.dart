@@ -24,17 +24,7 @@ class _ClienteGridState extends State<ClienteGrid> {
   String? image = '';
 
   @override
-  void initState() {
-    _buscarTodosOsClientes();
-    _pollingBuscarClientes();
-  }
-
-  void _pollingBuscarClientes() {
-    const duration = Duration(seconds: 3);
-    Timer.periodic(duration, (Timer timer) {
-      _filtrarPorPesquisa(_pesquisa.text);
-    });
-  }
+  void initState() {}
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +38,7 @@ class _ClienteGridState extends State<ClienteGrid> {
           Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ClienteForm(null)))
               .then((value) {
-            _buscarTodosOsClientes();
+            _pesquisa.text = '';
           });
         },
         hintNegativo: 'Sem clientes para exibir!',
@@ -68,7 +58,7 @@ class _ClienteGridState extends State<ClienteGrid> {
                     builder: (context) =>
                         ClienteForm(ClienteModel.fromMap(p0)))).then((value) {
               setState(() {
-                _buscarTodosOsClientes();
+                _pesquisa.text = '';
               });
             });
           },
@@ -84,22 +74,12 @@ class _ClienteGridState extends State<ClienteGrid> {
             .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
             .toList();
 
-        _filtrados = bairroFiltrado;
+        _pesquisa.text = '';
       });
     } else {
       setState(() {
-        _filtrados = _clientes;
+        _pesquisa.text = '';
       });
     }
-  }
-
-  void _buscarTodosOsClientes() async {
-    List<ClienteModel> clientes = await ClienteRepositorio().GetAllClientes();
-    setState(() {
-      _clientes = clientes;
-      if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = clientes;
-      }
-    });
   }
 }

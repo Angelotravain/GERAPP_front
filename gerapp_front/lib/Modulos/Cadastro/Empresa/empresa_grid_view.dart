@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
+import 'package:gerapp_front/Helpers/HttpGeneric.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_repositorio.dart';
 
 import '../../../Helpers/Controles/entrada/montar_lista.dart';
@@ -41,9 +42,7 @@ class _EmpresaGridState extends State<EmpresaGrid> {
             });
           },
           funcaoAtualizar: () {
-            if (mounted) {
-              _filtrarPorPesquisa(_pesquisa.text);
-            }
+            _filtrarPorPesquisa(_pesquisa.text);
           },
           validaHint: true,
           hintPositivo: 'Pesquise seu empresa!',
@@ -56,7 +55,7 @@ class _EmpresaGridState extends State<EmpresaGrid> {
           subtitle: 'proprietario',
           controller: _pesquisa,
           deleteFunction: (p0) {
-            EmpresaRepositorio().deleteEmpresa(p0);
+            GenericHttp().Delete(p0, Local.URL_DELETE_EMPRESA);
           },
           editFunction: (p0) {
             Navigator.push(

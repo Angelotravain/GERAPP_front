@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
-import 'package:gerapp_front/Helpers/Controles/entrada/combo_pesquisa_cidade.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
@@ -26,8 +25,6 @@ class _BairroFormState extends State<BairroForm> {
   TextEditingController _cidadeController = TextEditingController();
   TextEditingController _cidadeIdController = TextEditingController();
   TextEditingController _valorFreteController = TextEditingController();
-  final MultiSelectController _selecionarCidade = MultiSelectController();
-  late ValueItem _cidadeSelecionada = const ValueItem(label: '', value: null);
   late bool? valorFrete = null;
 
   @override
@@ -42,7 +39,6 @@ class _BairroFormState extends State<BairroForm> {
       _valorFreteController.text =
           NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
               .format(bairro.valorFrete);
-      _cidadeController.text = bairro.cidadeId.toString();
       _cidadeIdController.text = bairro.cidadeId.toString();
       valorFrete = bairro.isentaFrete;
     }
@@ -61,6 +57,7 @@ class _BairroFormState extends State<BairroForm> {
               _nomeController.text,
               _valorFreteController.text.toString(),
               valorFrete != true ? false : true,
+              int.parse(_cidadeIdController.text),
               widget.bairro);
           Navigator.pop(context);
         },
@@ -90,9 +87,13 @@ class _BairroFormState extends State<BairroForm> {
               height: 10.0,
             ),
             SingleChildScrollView(
-              child: ComboCidade(
+              child: ComboPesquisavel(
+                apiUrl: Local.URL_CIDADE_LISTA,
                 controller: _cidadeController,
                 id: _cidadeIdController,
+                name: 'nome',
+                identify: 'id',
+                label: 'Pesquise sua cidade',
               ),
             ),
             const SizedBox(

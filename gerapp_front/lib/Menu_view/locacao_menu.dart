@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Equipamento/equipamento_grid_view.dart';
 import 'package:gerapp_front/Modulos/Cadastro/TipoEquipamento/tipo_equipamento_grid_view.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Veiculo/veiculo_grid_view.dart';
 
@@ -32,7 +33,8 @@ class LocacaoMenu extends StatelessWidget {
             title: Text('Equipamentos'),
             leading: Icon(Icons.table_restaurant),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EquipamentoGrid()));
             },
           ),
           ListTile(

@@ -91,6 +91,7 @@ class _veiculoFormState extends State<VeiculoForm> {
                 _manutencaoEmDia,
                 _imagem.text ?? '',
                 widget.veiculo != null ? widget.veiculo : null);
+            Navigator.pop(context);
           },
           icone: widget.veiculo != null
               ? Icon(Icons.save_as, color: Cores.BRANCO)

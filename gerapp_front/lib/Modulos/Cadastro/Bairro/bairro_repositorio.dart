@@ -45,6 +45,7 @@ class BairroRepositorio {
     String nome,
     String valor,
     bool? isentarFrete,
+    int cidadeId,
     BairroModel? bairro,
   ) async {
     final bairroModel = BairroModel(
@@ -53,11 +54,7 @@ class BairroRepositorio {
         valorFrete:
             double.parse(valor.replaceAll('R\$', '').replaceAll(',', '.')),
         isentaFrete: isentarFrete,
-        cidadeId: cidadeSelecionada.value == 0
-            ? bairro != null
-                ? bairro.cidadeId
-                : 1
-            : int.parse(cidadeSelecionada.value));
+        cidadeId: cidadeId);
 
     final url = Uri.parse(
         '$baseUrl${tipo == 'PUT' ? 'AtualizarBairro/${bairro?.id}' : 'SalvarBairro'}');

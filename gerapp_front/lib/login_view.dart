@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
+import 'package:gerapp_front/Helpers/HttpGeneric.dart';
+import 'package:gerapp_front/Helpers/LocalHttp.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 import 'package:gerapp_front/home_view.dart';
 
 class LoginForm extends StatelessWidget {
@@ -10,6 +13,7 @@ class LoginForm extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController _login = TextEditingController();
     TextEditingController _senha = TextEditingController();
+    String _retornoDados = '';
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -25,6 +29,7 @@ class LoginForm extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(_retornoDados),
               Row(
                 children: [
                   Icon(Icons.people),
@@ -50,13 +55,37 @@ class LoginForm extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PaginaPrincipal(),
-                    ),
-                  );
+                onPressed: () async {
+                  var funcionario = await GenericHttp().GetTwoArguments(
+                      Local.URL_LOGIN_FUNCIONARIO, _login.text, _senha.text);
+                  funcionario != null
+                      ? Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaginaPrincipal(
+                              funcionario:
+                                  FuncionarioModel.fromMap(funcionario),
+                            ),
+                          ),
+                        )
+                      : showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Funcionário não encontrado'),
+                              content: Text(
+                                  'O funcionário informado não foi encontrado. Por favor, verifique e tente novamente.'),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                 },
                 child: Text('Fazer login'),
               ),

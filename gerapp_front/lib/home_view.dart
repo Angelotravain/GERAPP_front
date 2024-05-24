@@ -7,9 +7,11 @@ import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
 import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 
 class PaginaPrincipal extends StatefulWidget {
-  const PaginaPrincipal({super.key});
+  final FuncionarioModel funcionario;
+  const PaginaPrincipal({super.key, required this.funcionario});
 
   @override
   State<PaginaPrincipal> createState() => _paginaPrincipalState();
@@ -18,6 +20,13 @@ class PaginaPrincipal extends StatefulWidget {
 class _paginaPrincipalState extends State<PaginaPrincipal> {
   final bool validaAppBar = true;
   bool _acessaAuditoria = false;
+  String _nomeFuncionario = '';
+  String _imagemFuncionario = '';
+  @override
+  void initState() {
+    _nomeFuncionario = widget.funcionario!.nome;
+    _imagemFuncionario = widget.funcionario!.imagem;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +70,10 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            CabecalhoMenu(),
+            CabecalhoMenu(
+              nome: _nomeFuncionario ?? null,
+              imagem: _imagemFuncionario ?? null,
+            ),
             Column(
               children: [
                 CadastrosMenu(),
@@ -76,8 +88,8 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Ola',
+            Text(
+              'Olá ${_nomeFuncionario}, bem-vindo ao sistema GERAPP',
             ),
           ],
         ),

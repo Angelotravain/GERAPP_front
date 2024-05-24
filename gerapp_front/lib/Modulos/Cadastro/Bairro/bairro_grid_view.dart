@@ -16,52 +16,15 @@ class BairroGrid extends StatefulWidget {
 
 class _BairroGridState extends State<BairroGrid> {
   void atualizarEstado() {
-    setState(() {});
+    setState(() {
+      _pesquisa.text = '';
+    });
   }
 
   @override
-  void initState() {
-    super.initState();
-    _buscarTodosOsBairros();
-    _pollingBuscarBairros();
-  }
+  void initState() {}
 
   TextEditingController _pesquisa = TextEditingController();
-  List<BairroModel> _bairros = [];
-  List<BairroModel> _filtrados = [];
-
-  void _buscarTodosOsBairros() async {
-    List<BairroModel> bairros = await BairroRepositorio().GetAllBairros();
-    setState(() {
-      _bairros = bairros;
-      if (_filtrados.isEmpty && _pesquisa.text == '') {
-        _filtrados = bairros;
-      }
-    });
-  }
-
-  void _pollingBuscarBairros() {
-    const duration = Duration(seconds: 0);
-    Timer.periodic(duration, (Timer timer) {
-      _filtrarPorPesquisa(_pesquisa.text);
-    });
-  }
-
-  void _filtrarPorPesquisa(String filtro) {
-    if (filtro != null || filtro != '') {
-      setState(() {
-        List<BairroModel> bairroFiltrado = _bairros
-            .where((x) => x.nome.toLowerCase().contains(filtro.toLowerCase()))
-            .toList();
-
-        _filtrados = bairroFiltrado;
-      });
-    } else {
-      setState(() {
-        _filtrados = _bairros;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,12 +37,11 @@ class _BairroGridState extends State<BairroGrid> {
                   builder: (context) => BairroForm(
                         validarFrete: false,
                       ))).then((value) {
-            _filtrarPorPesquisa(_pesquisa.text);
-            _buscarTodosOsBairros();
+            _pesquisa.text = '';
           });
         },
         funcaoAtualizar: () {
-          _filtrarPorPesquisa(_pesquisa.text);
+          _pesquisa.text = '';
         },
         validaHint: true,
         hintPositivo: 'Pesquise seu bairro!',
@@ -101,8 +63,9 @@ class _BairroGridState extends State<BairroGrid> {
                   builder: (context) => BairroForm(
                       validarFrete: false,
                       bairro: BairroModel.fromMap(p0)))).then((value) {
-            _filtrarPorPesquisa(_pesquisa.text);
-            _buscarTodosOsBairros();
+            setState(() {
+              _pesquisa.text = '';
+            });
           });
         },
       ),

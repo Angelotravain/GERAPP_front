@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/montar_lista.dart';
+import 'package:gerapp_front/Helpers/HttpGeneric.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
+import 'package:gerapp_front/Modulos/Cadastro/TipoEquipamento/tipo_equipamento_form_view.dart';
+import 'package:gerapp_front/Modulos/Cadastro/TipoEquipamento/tipo_equipamento_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/TipoEquipamento/tipo_equipamento_repositorio.dart';
 
 class TipoEquipamentoGrid extends StatefulWidget {
@@ -28,43 +31,42 @@ class _tipoEquipamentoGridState extends State<TipoEquipamentoGrid> {
     return Scaffold(
       appBar: AppBarGrid(
         funcaoRota: () {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => TipoEquipamentoForm(
-          //               validarFrete: false,
-          //             ))).then((value) {
-          //   _filtrarPorPesquisa(_pesquisa.text);
-          //   _buscarTodosOstipoEquipamentos();
-          // });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TipoEquipamentoForm(
+                        tipoEquipamento: null,
+                      ))).then((value) {
+            _filtrarPorPesquisa(_pesquisa.text);
+          });
         },
         funcaoAtualizar: () {
-          _filtrarPorPesquisa(_pesquisa.text);
+          _pesquisa.text = '';
         },
         validaHint: true,
-        hintPositivo: 'Pesquise seu tipoEquipamento!',
-        hintNegativo: 'Sem tipoEquipamentos!',
+        hintPositivo: 'Pesquise seu tipo de equipamento!',
+        hintNegativo: 'Sem tipos de equipamentos!',
         controller: _pesquisa,
       ),
       body: MontaLista(
         apiUrl: Local.URL_TIPO_EQUIPAMENTO_LISTA,
         controller: _pesquisa,
         deleteFunction: (p0) {
-          TipoEquipamentoRepositorio().deleteTipoEquipamento(p0);
+          TipoEquipamentoRepositorio().deleteTipoEquipamento(int.parse(p0));
         },
         subtitle: 'modelo',
         title: 'descricao',
         editFunction: (p0) {
-          // Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => tipoEquipamentoForm(
-          //                 validarFrete: false,
-          //                 tipoEquipamento: tipoEquipamentoModel.fromMap(p0))))
-          //     .then((value) {
-          //   _filtrarPorPesquisa(_pesquisa.text);
-          //   _buscarTodosOstipoEquipamentos();
-          // });
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TipoEquipamentoForm(
+                          tipoEquipamento: TipoEquipamentoModel.fromJson(p0))))
+              .then((value) {
+            setState(() {
+              _pesquisa.text = '';
+            });
+          });
         },
       ),
     );
