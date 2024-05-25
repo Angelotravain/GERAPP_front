@@ -78,7 +78,7 @@ class _ComboPesquisavelState extends State<ComboPesquisavel> {
         if (response.statusCode == 200) {
           final jsonData = json.decode(response.body);
           setState(() {
-            _searchController.text = _items[0][_nome].toString();
+            _searchController.text = jsonData[_nome].toString();
           });
         } else {
           throw Exception('Falha ao carregar dados da API');

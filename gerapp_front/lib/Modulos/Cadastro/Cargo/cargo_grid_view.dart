@@ -8,6 +8,9 @@ import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_form_view.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_repositorio.dart';
 
+import '../../../Helpers/Controles/entrada/montar_lista.dart';
+import '../../../Helpers/LocalHttp.dart';
+
 class CargoGrid extends StatefulWidget {
   const CargoGrid({super.key});
 
@@ -65,167 +68,46 @@ class _CargoGridState extends State<CargoGrid> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarGrid(
-        controller: _pesquisa,
-        funcaoAtualizar: () {
-          _filtrarPorPesquisa(_pesquisa.text);
-        },
-        funcaoRota: () {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CargoForm(null)))
-              .then((value) {
-            _buscarTodosOsCargos();
-          });
-        },
-        hintNegativo: 'Sem cargos para exibir!',
-        hintPositivo: 'Pesquise seu cargo!',
-        validaHint: _filtrados.isNotEmpty,
-      ),
-      body: ListView.builder(
-          itemCount: _filtrados.length,
-          itemBuilder: (context, index) {
-            CargoModel cargo = _filtrados[index];
-            return Card(
-              child: ListTile(
-                title: Text(
-                  cargo.descricao,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                subtitle: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Verifica a largura da tela
-                    bool isWideScreen = constraints.maxWidth > 600;
-
-                    return isWideScreen
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: _buildToogleSelecao(cargo),
-                          )
-                        : Column(
-                            children: _buildToogleSelecao(cargo),
-                          );
-                  },
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      color: Cores.AZUL_FUNDO,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CargoForm(CargoModel(
-                                      id: cargo.id,
-                                      acessaAuditoria: cargo.acessaAuditoria,
-                                      acessaCadastro: cargo.acessaCadastro,
-                                      acessaConfiguracao:
-                                          cargo.acessaConfiguracao,
-                                      acessaFinanceiro: cargo.acessaFinanceiro,
-                                      acessaLocacao: cargo.acessaLocacao,
-                                      descricao: cargo.descricao,
-                                      gerarCadastro:
-                                          cargo.gerarCadastro)))).then((value) {
-                            _buscarTodosOsCargos();
-                          });
-                        },
-                        icon: Icon(Icons.edit),
-                        color: Cores.BRANCO,
-                        tooltip: 'Editar',
-                      ),
-                    ),
-                    Card(
-                      color: Cores.VERMELHO,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirmação'),
-                                content: Text(
-                                    'Tem certeza que deseja excluir este cargo?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Cancelar'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                      Future<String> deleteFuture =
-                                          CargoRepositorio()
-                                              .deleteCargo(cargo.id!);
-                                      showDialog(
-                                        barrierColor: Cores.PRETO,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Exclusão de Cargo'),
-                                            content: FutureBuilder<String>(
-                                              future: deleteFuture,
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot<String>
-                                                      snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
-                                                } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      'Erro: ${snapshot.error}');
-                                                } else {
-                                                  _buscarTodosOsCargos();
-                                                  return Text(
-                                                      snapshot.data ?? '');
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text('Confirmar'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.delete),
-                        color: Cores.BRANCO,
-                        tooltip: 'Excluir',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-    );
+        appBar: AppBarGrid(
+          controller: _pesquisa,
+          funcaoAtualizar: () {
+            _filtrarPorPesquisa(_pesquisa.text);
+          },
+          funcaoRota: () {
+            Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CargoForm(null)))
+                .then((value) {
+              _buscarTodosOsCargos();
+            });
+          },
+          hintNegativo: 'Sem cargos para exibir!',
+          hintPositivo: 'Pesquise seu cargo!',
+          validaHint: _filtrados.isNotEmpty,
+        ),
+        body: MontaLista(
+            apiUrl: Local.URL_BUSCAR_CARGO,
+            title: 'descricao',
+            subtitle: '',
+            controller: _pesquisa,
+            editFunction: (p0) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CargoForm(CargoModel.fromMap(p0)))).then((value) {
+                _buscarTodosOsCargos();
+              });
+            },
+            deleteFunction: ((p0) {
+              CargoRepositorio().deleteCargo(p0);
+            })));
   }
 
   List<Widget> _buildToogleSelecao(CargoModel cargo) {
     return [
       ToogleSelecao(
-        label: 'Visualiza Auditoria?',
-        value: cargo.acessaAuditoria,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
         label: 'Visualiza cadastro?',
         value: cargo.acessaCadastro,
-        onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Visualiza Configuração?',
-        value: cargo.acessaConfiguracao,
         onChanged: (value) {},
       ),
       ToogleSelecao(
@@ -237,12 +119,7 @@ class _CargoGridState extends State<CargoGrid> {
         label: 'Visualiza Locação?',
         value: cargo.acessaLocacao,
         onChanged: (value) {},
-      ),
-      ToogleSelecao(
-        label: 'Gera cadastros?',
-        value: cargo.gerarCadastro,
-        onChanged: (value) {},
-      ),
+      )
     ];
   }
 }

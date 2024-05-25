@@ -16,12 +16,9 @@ class CargoForm extends StatefulWidget {
 }
 
 class _CargoScreenState extends State<CargoForm> {
-  bool _acessaAuditoria = false;
   bool _acessaCadastro = false;
-  bool _acessaConfiguracao = false;
   bool _acessaFinanceiro = false;
   bool _acessaLocacao = false;
-  bool _gerarCadastro = false;
   TextEditingController _descricaoController = TextEditingController();
 
   @override
@@ -39,12 +36,9 @@ class _CargoScreenState extends State<CargoForm> {
           CargoRepositorio().salvarEditar(
               widget.cargo != null ? 'PUT' : 'POST',
               _descricaoController.text,
-              _acessaAuditoria!,
               _acessaCadastro!,
-              _acessaConfiguracao!,
               _acessaFinanceiro!,
               _acessaLocacao!,
-              _gerarCadastro!,
               widget.cargo != null ? widget.cargo : null);
           Navigator.pop(context);
         },
@@ -66,27 +60,11 @@ class _CargoScreenState extends State<CargoForm> {
           ),
           SizedBox(height: 20.0),
           ToogleSelecao(
-              label: 'Acessa Auditoria',
-              value: _acessaAuditoria,
-              onChanged: (value) {
-                setState(() {
-                  _acessaAuditoria = value;
-                });
-              }),
-          ToogleSelecao(
               label: 'Acessa Cadastro',
               value: _acessaCadastro,
               onChanged: (value) {
                 setState(() {
                   _acessaCadastro = value;
-                });
-              }),
-          ToogleSelecao(
-              label: 'Acessa Configuração',
-              value: _acessaConfiguracao,
-              onChanged: (value) {
-                setState(() {
-                  _acessaConfiguracao = value;
                 });
               }),
           ToogleSelecao(
@@ -105,14 +83,6 @@ class _CargoScreenState extends State<CargoForm> {
                   _acessaLocacao = value;
                 });
               }),
-          ToogleSelecao(
-              label: 'Gera Cadastro',
-              value: _gerarCadastro,
-              onChanged: (value) {
-                setState(() {
-                  _gerarCadastro = value;
-                });
-              }),
         ],
       ),
     );
@@ -120,12 +90,9 @@ class _CargoScreenState extends State<CargoForm> {
 
   void _PreencheCampos(CargoModel? cargo) {
     if (cargo == null) return;
-    _acessaAuditoria = cargo.acessaAuditoria!;
     _acessaCadastro = cargo.acessaCadastro!;
-    _acessaConfiguracao = cargo.acessaConfiguracao!;
     _acessaFinanceiro = cargo.acessaFinanceiro!;
     _acessaLocacao = cargo.acessaLocacao!;
-    _gerarCadastro = cargo.gerarCadastro!;
     _descricaoController.text = cargo.descricao!;
   }
 }

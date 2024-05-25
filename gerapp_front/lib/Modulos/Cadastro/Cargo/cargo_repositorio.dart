@@ -36,23 +36,17 @@ class CargoRepositorio {
   Future<void> salvarEditar(
     String tipo,
     String descricaoCargo,
-    bool? auditoria,
     bool? cadastro,
-    bool? configuracao,
     bool? financeiro,
     bool? locacao,
-    bool? gerarCadastro,
     CargoModel? cargo,
   ) async {
     final cargoModel = CargoModel(
         id: 0,
         descricao: descricaoCargo,
-        acessaAuditoria: auditoria!,
         acessaCadastro: cadastro!,
-        acessaConfiguracao: configuracao!,
         acessaFinanceiro: financeiro!,
-        acessaLocacao: locacao!,
-        gerarCadastro: gerarCadastro!);
+        acessaLocacao: locacao!);
 
     final url = Uri.parse(
         '$baseUrl${tipo == 'PUT' ? 'AtualizarCargo/${cargo?.id}' : 'SalvarCargo'}');

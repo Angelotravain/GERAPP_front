@@ -7,10 +7,10 @@ import 'package:gerapp_front/Menu_view/cabecalho_menu.dart';
 import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_login_model.dart';
 
 class PaginaPrincipal extends StatefulWidget {
-  final FuncionarioModel funcionario;
+  final FuncionarioLoginDto funcionario;
   const PaginaPrincipal({super.key, required this.funcionario});
 
   @override
@@ -19,12 +19,12 @@ class PaginaPrincipal extends StatefulWidget {
 
 class _paginaPrincipalState extends State<PaginaPrincipal> {
   final bool validaAppBar = true;
-  bool _acessaAuditoria = false;
   String _nomeFuncionario = '';
   String _imagemFuncionario = '';
   @override
   void initState() {
-    _nomeFuncionario = widget.funcionario!.nome;
+    _nomeFuncionario =
+        '${widget.funcionario!.nome} - ${widget.funcionario.descricao}';
     _imagemFuncionario = widget.funcionario!.imagem;
   }
 
@@ -40,15 +40,6 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
         ),
         backgroundColor: Cores.AZUL_FUNDO,
         actions: <Widget>[
-          ToogleSelecao(
-            label: '',
-            value: _acessaAuditoria,
-            onChanged: (value) {
-              setState(() {
-                _acessaAuditoria = value;
-              });
-            },
-          ),
           SizedBox(
             width: 20,
           ),
@@ -76,9 +67,15 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
             ),
             Column(
               children: [
-                CadastrosMenu(),
-                FinanceiroMenu(),
-                LocacaoMenu(),
+                if (widget.funcionario != null &&
+                    widget.funcionario.acessaCadastro == true)
+                  CadastrosMenu(),
+                if (widget.funcionario != null &&
+                    widget.funcionario.acessaFinanceiro == true)
+                  FinanceiroMenu(),
+                if (widget.funcionario != null &&
+                    widget.funcionario.acessaLocacao == true)
+                  LocacaoMenu(),
               ],
             ),
           ],
@@ -89,7 +86,7 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Olá ${_nomeFuncionario}, bem-vindo ao sistema GERAPP',
+              'Olá ${widget.funcionario.nome}, bem-vindo ao sistema GERAPP',
             ),
           ],
         ),

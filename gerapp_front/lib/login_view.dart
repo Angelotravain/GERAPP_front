@@ -3,6 +3,7 @@ import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/HttpGeneric.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_login_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 import 'package:gerapp_front/home_view.dart';
 
@@ -64,7 +65,7 @@ class LoginForm extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => PaginaPrincipal(
                               funcionario:
-                                  FuncionarioModel.fromMap(funcionario),
+                                  FuncionarioLoginDto.fromMap(funcionario),
                             ),
                           ),
                         )

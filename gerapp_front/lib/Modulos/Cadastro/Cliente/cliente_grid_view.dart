@@ -43,7 +43,7 @@ class _ClienteGridState extends State<ClienteGrid> {
         },
         hintNegativo: 'Sem clientes para exibir!',
         hintPositivo: 'Pesquise seu cliente!',
-        validaHint: _filtrados.isNotEmpty,
+        validaHint: true,
       ),
       body: MontaLista(
           apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarClientes',

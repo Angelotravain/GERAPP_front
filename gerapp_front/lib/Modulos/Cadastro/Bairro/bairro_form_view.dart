@@ -8,7 +8,6 @@ import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Bairro/bairro_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Bairro/bairro_repositorio.dart';
 import 'package:intl/intl.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class BairroForm extends StatefulWidget {
   final BairroModel? bairro;

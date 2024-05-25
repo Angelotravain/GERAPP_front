@@ -75,6 +75,35 @@ class _MontaListaState extends State<MontaLista> {
     });
   }
 
+  Future<void> _showDeleteConfirmationDialog(dynamic item) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmação'),
+          content: Text('Tem certeza que deseja excluir este item?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await widget.deleteFunction(item['id']);
+                _filterData(_filterController.text);
+                _fetchData();
+              },
+              child: Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -122,33 +151,7 @@ class _MontaListaState extends State<MontaLista> {
                         color: Colors.red,
                         child: IconButton(
                           onPressed: () async {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Confirmação'),
-                                  content: Text(
-                                      'Tem certeza que deseja excluir este item?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Cancelar'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        await widget.deleteFunction(item['id']);
-                                        _filterData(_filterController.text);
-                                        _fetchData();
-                                      },
-                                      child: Text('Confirmar'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            await _showDeleteConfirmationDialog(item);
                           },
                           icon: Icon(Icons.delete),
                           color: Colors.white,
