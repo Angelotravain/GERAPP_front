@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_grid.dart';
 import 'package:gerapp_front/Helpers/HttpGeneric.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model_novo.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_repositorio.dart';
 
 import '../../../Helpers/Controles/entrada/montar_lista.dart';
 import '../../../Helpers/LocalHttp.dart';
 import 'empresa_form_view.dart';
-import 'empresa_model.dart';
 
 class EmpresaGrid extends StatefulWidget {
   EmpresaGrid({Key? key}) : super(key: key);
@@ -61,7 +61,8 @@ class _EmpresaGridState extends State<EmpresaGrid> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => EmpresaForm(EmpresaModel.fromMap(p0))),
+                  builder: (context) =>
+                      EmpresaForm(EmpresaModelNovo.fromJson(p0))),
             ).then((value) {
               setState(() {
                 _pesquisa.text = '';

@@ -125,7 +125,7 @@ class _FuncionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
                   return Card(
                     child: ListTile(
                       title: Text(item.logradouro + item.numero ?? ''),
-                      subtitle: Text(item.complemento),
+                      subtitle: Text(item.complemento!),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -137,13 +137,14 @@ class _FuncionarioFormEnderecoState extends State<FuncionarioFormEndereco> {
                                 setState(() {
                                   var selecionado = widget.enderecoAdicionado!
                                       .elementAt(index);
-                                  widget.cepFuncionario!.text = selecionado.cep;
+                                  widget.cepFuncionario!.text =
+                                      selecionado.cep!;
                                   widget.logradouroFuncionario!.text =
                                       selecionado.logradouro;
                                   widget.numeroFuncionario!.text =
                                       selecionado.numero;
                                   widget.complemento!.text =
-                                      selecionado.complemento;
+                                      selecionado.complemento!;
                                   widget.enderecoAdicionado!.removeAt(index);
                                 });
                               },

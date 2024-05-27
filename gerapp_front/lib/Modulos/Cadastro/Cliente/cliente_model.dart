@@ -6,7 +6,7 @@ import '../Usuario/usuario_model.dart';
 class ClienteModel {
   final int id;
   final String nome;
-  final String? email;
+  final String email;
   final String? cpf;
   final String? telefone;
   final bool statusCliente;
@@ -21,7 +21,7 @@ class ClienteModel {
   ClienteModel({
     required this.id,
     required this.nome,
-    this.email,
+    required this.email,
     this.cpf,
     this.telefone,
     required this.statusCliente,
@@ -39,7 +39,7 @@ class ClienteModel {
       return ClienteModel(
         id: map['id'] as int,
         nome: map['nome'] as String,
-        email: map['email'] as String?,
+        email: map['email'] as String,
         cpf: map['cpf'] as String?,
         telefone: map['telefone'] as String?,
         statusCliente: map['statusCliente'] as bool,

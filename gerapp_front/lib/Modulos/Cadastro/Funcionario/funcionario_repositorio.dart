@@ -1,14 +1,10 @@
 import 'dart:convert';
 
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
-import 'package:gerapp_front/Helpers/conversor.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_model.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Usuario/usuario_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class FuncionarioRepositorio {
   Future<List<FuncionarioModel>> GetAllFuncionarios() async {

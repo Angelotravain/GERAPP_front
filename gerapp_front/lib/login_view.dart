@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/show_message.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/HttpGeneric.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
@@ -59,34 +60,19 @@ class LoginForm extends StatelessWidget {
                 onPressed: () async {
                   var funcionario = await GenericHttp().GetTwoArguments(
                       Local.URL_LOGIN_FUNCIONARIO, _login.text, _senha.text);
-                  funcionario != null
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaginaPrincipal(
-                              funcionario:
-                                  FuncionarioLoginDto.fromMap(funcionario),
-                            ),
-                          ),
-                        )
-                      : showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Funcionário não encontrado'),
-                              content: Text(
-                                  'O funcionário informado não foi encontrado. Por favor, verifique e tente novamente.'),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                  if (funcionario == null) {
+                    ShowMessage.show(
+                        context, 'Login ou senha incorretos, tente novamente!');
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PaginaPrincipal(
+                          funcionario: FuncionarioLoginDto.fromMap(funcionario),
+                        ),
+                      ),
+                    );
+                  }
                 },
                 child: Text('Fazer login'),
               ),

@@ -47,4 +47,8 @@ class Local {
       'https://localhost:7009/api/Gerapp/Cadastro/SalvarBairro';
   static String URL_CIDADE_LISTA =
       '${localName}/api/Gerapp/Cadastro/ListarCidades';
+  static String URL_EDITAR_EMPRESA =
+      '${localName}/api/Gerapp/Cadastro/AtualizarEmpresas';
+  static String URL_SALVAR_EMPRESA =
+      '${localName}/api/Gerapp/Cadastro/SalvarEmpresas';
 }

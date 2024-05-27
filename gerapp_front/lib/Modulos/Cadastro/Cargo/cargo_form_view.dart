@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/show_message.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_repositorio.dart';
 
@@ -33,14 +34,19 @@ class _CargoScreenState extends State<CargoForm> {
         titulo:
             widget.cargo != null ? 'Edite seu cargo!' : 'Cadastre seu cargo!',
         funcaoSalvar: () {
-          CargoRepositorio().salvarEditar(
-              widget.cargo != null ? 'PUT' : 'POST',
-              _descricaoController.text,
-              _acessaCadastro!,
-              _acessaFinanceiro!,
-              _acessaLocacao!,
-              widget.cargo != null ? widget.cargo : null);
-          Navigator.pop(context);
+          if (_descricaoController.text.isEmpty) {
+            ShowMessage.show(
+                context, 'Preencha a descrição do cargo para prosseguir!');
+          } else {
+            CargoRepositorio().salvarEditar(
+                widget.cargo != null ? 'PUT' : 'POST',
+                _descricaoController.text,
+                _acessaCadastro!,
+                _acessaFinanceiro!,
+                _acessaLocacao!,
+                widget.cargo != null ? widget.cargo : null);
+            Navigator.pop(context);
+          }
         },
         tipoApp: widget.cargo != null ? 'E' : 'I',
         icone: widget.cargo != null

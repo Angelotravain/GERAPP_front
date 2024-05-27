@@ -3,6 +3,7 @@ import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/appbar_cadastros.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/show_message.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Bairro/bairro_model.dart';
@@ -51,14 +52,20 @@ class _BairroFormState extends State<BairroForm> {
             ? 'Edite seu bairro!'
             : 'Cadastre seu bairro!',
         funcaoSalvar: () {
-          BairroRepositorio().salvarEditar(
-              widget.bairro != null ? 'PUT' : 'POST',
-              _nomeController.text,
-              _valorFreteController.text.toString(),
-              valorFrete != true ? false : true,
-              int.parse(_cidadeIdController.text),
-              widget.bairro);
-          Navigator.pop(context);
+          if (_nomeController.text.isEmpty ||
+              _valorFreteController.text.isEmpty ||
+              _cidadeIdController.text.isEmpty) {
+            ShowMessage.show(context, 'Preencha todos os campos para seguir!');
+          } else {
+            BairroRepositorio().salvarEditar(
+                widget.bairro != null ? 'PUT' : 'POST',
+                _nomeController.text,
+                _valorFreteController.text.toString(),
+                valorFrete != true ? false : true,
+                int.parse(_cidadeIdController.text),
+                widget.bairro);
+            Navigator.pop(context);
+          }
         },
         tipoApp: widget.bairro != null ? 'E' : 'I',
         icone: widget.bairro != null

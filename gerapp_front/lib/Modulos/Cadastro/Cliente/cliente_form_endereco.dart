@@ -122,7 +122,7 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                 return Card(
                   child: ListTile(
                     title: Text(item.logradouro + item.numero),
-                    subtitle: Text(item.complemento),
+                    subtitle: Text(item.complemento!),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -134,12 +134,12 @@ class _ClienteFormEnderecoState extends State<ClienteFormEndereco> {
                               setState(() {
                                 var selecionado =
                                     widget.enderecoAdicionado!.elementAt(index);
-                                widget.cepCliente!.text = selecionado.cep;
+                                widget.cepCliente!.text = selecionado.cep!;
                                 widget.logradouroCliente!.text =
                                     selecionado.logradouro;
                                 widget.numeroCliente!.text = selecionado.numero;
                                 widget.complemento!.text =
-                                    selecionado.complemento;
+                                    selecionado.complemento!;
                                 _bairroIdController.text =
                                     selecionado.bairroId.toString();
                                 _bairroController.text =

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/bucacep.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model_novo.dart';
 
 import '../../../Helpers/Controles/entrada/novo_combo.dart';
 import '../../../Helpers/LocalHttp.dart';
 
 class EmpresaFormEndereco extends StatefulWidget {
-  final EmpresaModel? bairro;
+  final EmpresaModelNovo? bairro;
   final TextEditingController logradouroEmpresa;
   final TextEditingController cepEmpresa;
   final TextEditingController numeroEmpresa;

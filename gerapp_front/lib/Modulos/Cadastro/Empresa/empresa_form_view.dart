@@ -7,11 +7,10 @@ import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 
 import '../../../Helpers/Controles/entrada/appbar_cadastros.dart';
 import '../../../Helpers/Cores/cores.dart';
-import 'empresa_model.dart';
 
 class EmpresaForm extends StatefulWidget {
   @override
-  final EmpresaModel? empresa;
+  final EmpresaModelNovo? empresa;
 
   @override
   State<EmpresaForm> createState() => _empresaFormState();
@@ -65,9 +64,9 @@ class _empresaFormState extends State<EmpresaForm> {
                   DateTime.now(),
                   _ehFilialEmpresa,
                   _emailEmpresa.text,
-                  Endereco(
+                  EnderecoModel(
                     id: widget.empresa != null
-                        ? widget.empresa!.endereco!.id
+                        ? widget.empresa!.enderecoEmpresa!.id
                         : 0,
                     logradouro: _logradouroempresa.text,
                     numero: _numeroempresa.text,
@@ -77,7 +76,7 @@ class _empresaFormState extends State<EmpresaForm> {
                         ? int.parse(_estadoIdEmpresa.text)
                         : 0,
                     empresaId: widget.empresa != null
-                        ? widget.empresa!.endereco!.id
+                        ? widget.empresa!.enderecoEmpresa!.id
                         : 0,
                     funcionarioId: 0,
                     clienteId: 0,
@@ -156,28 +155,30 @@ class _empresaFormState extends State<EmpresaForm> {
     );
   }
 
-  void PreencherCampos(EmpresaModel? empresa) {
+  void PreencherCampos(EmpresaModelNovo? empresa) {
     if (empresa != null) {
       _cnpjEmpresa.text = empresa.cnpj ?? '';
-      _dataFundacaoEmpresa = empresa.dataFundacao ?? '';
-      _ehFilialEmpresa = empresa.ehFilial ?? false;
-      _nomeEmpresa.text = empresa.nome;
+      _dataFundacaoEmpresa =
+          empresa.dataFundacao != null ? empresa.dataFundacao!.toString() : '';
+      _ehFilialEmpresa = empresa.ehFilial;
+      _nomeEmpresa.text = empresa.nome ?? '';
       _emailEmpresa.text = empresa.email ?? '';
       _numeroFuncionariosEmpresa.text =
           empresa.numeroFuncionarios?.toString() ?? '';
-      _estadoIdEmpresa.text = empresa.estadoId.toString();
       _logoEmpresa.text = empresa.logoEmpresa ?? '';
       _proprietarioEmpresa.text = empresa.proprietario ?? '';
       _ramoAtuacaoEmpresa.text = empresa.ramoAtuacao ?? '';
       _telefoneEmpresa.text = empresa.telefone ?? '';
-      _webSiteEmpresa.text = empresa.webSite ?? '';
-      _cepEmpresa.text = empresa.endereco?.cep ?? '';
-      _complemento.text = empresa.endereco?.complemento ?? '';
-      _bairroEmpresa.text = empresa.endereco?.bairroId.toString() ?? '';
-      _estadoEmpresa.text = '';
-      _estadoIdEmpresa.text = empresa.estadoId.toString();
-      _logradouroempresa.text = empresa.endereco?.logradouro ?? '';
-      _numeroempresa.text = empresa.endereco?.numero ?? '';
+      _webSiteEmpresa.text = empresa.website ?? '';
+
+      if (empresa.enderecoEmpresa != null) {
+        _cepEmpresa.text = empresa.enderecoEmpresa!.cep ?? '';
+        _complemento.text = empresa.enderecoEmpresa!.complemento ?? '';
+        _bairroEmpresa.text =
+            empresa.enderecoEmpresa!.bairroId?.toString() ?? '';
+        _logradouroempresa.text = empresa.enderecoEmpresa!.logradouro ?? '';
+        _numeroempresa.text = empresa.enderecoEmpresa!.numero ?? '';
+      }
     }
   }
 }

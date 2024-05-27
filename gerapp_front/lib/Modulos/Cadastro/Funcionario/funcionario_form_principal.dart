@@ -6,15 +6,12 @@ import 'package:flutter/widgets.dart';
 import 'package:gerapp_front/Componentes_gerais/campo_valor_formatado.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/novo_combo.dart';
-import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Helpers/LocalHttp.dart';
 import 'package:gerapp_front/Helpers/conversor.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Bairro/bairro_model.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cargo/cargo_model.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model_novo.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class FuncionarioPrincipalForm extends StatefulWidget {
   final TextEditingController? nome;
@@ -44,7 +41,7 @@ class FuncionarioPrincipalForm extends StatefulWidget {
 
 class _funcionarioPrincipalFormState extends State<FuncionarioPrincipalForm> {
   Future<CargoModel>? _cargoFuturo;
-  Future<EmpresaModel>? _empresaFuturo;
+  Future<EmpresaModelNovo>? _empresaFuturo;
 
   Future<void> getImage() async {
     final pickedFile =

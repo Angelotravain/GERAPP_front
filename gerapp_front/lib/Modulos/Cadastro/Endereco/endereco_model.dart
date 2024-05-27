@@ -4,8 +4,8 @@ class EnderecoModel {
   final int id;
   final String logradouro;
   final String numero;
-  final String complemento;
-  final String cep;
+  final String? complemento;
+  final String? cep;
   final int bairroId;
   final int? clienteId;
   final int? funcionarioId;
@@ -15,8 +15,8 @@ class EnderecoModel {
     required this.id,
     required this.logradouro,
     required this.numero,
-    required this.complemento,
-    required this.cep,
+    this.complemento,
+    this.cep,
     required this.bairroId,
     this.clienteId,
     this.funcionarioId,

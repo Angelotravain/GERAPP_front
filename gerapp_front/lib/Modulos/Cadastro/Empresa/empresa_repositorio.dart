@@ -1,20 +1,20 @@
 import 'dart:convert';
+import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../Helpers/LocalHttp.dart';
-import 'empresa_model.dart';
 import 'empresa_model_novo.dart';
 
 class EmpresaRepositorio {
   static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
 
-  Future<List<EmpresaModel>> GetAllEmpresas() async {
+  Future<List<EmpresaModelNovo>> GetAllEmpresas() async {
     final response = await http.get(Uri.parse('$baseUrl/ListarEmpresas'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
-      List<EmpresaModel> empresas =
-          jsonData.map((e) => EmpresaModel.fromJson(e)).toList();
+      List<EmpresaModelNovo> empresas =
+          jsonData.map((e) => EmpresaModelNovo.fromJson(e)).toList();
 
       return empresas;
     } else {
@@ -42,14 +42,14 @@ class EmpresaRepositorio {
     DateTime? dataFundacaoEmpresa,
     bool? ehFilial,
     String? emailEmpresa,
-    Endereco enderecoEmpresa,
+    EnderecoModel enderecoEmpresa,
     int estadoId,
     int? numeroFuncionariosEmpresa,
     String? proprietarioEmpresa,
     String? ramoAtuacaoEmpresa,
     String telefoneEmpresa,
     String? webSiteEmpresa,
-    EmpresaModel? empresa,
+    EmpresaModelNovo? empresa,
   ) async {
     final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss');
     final String formattedDataFundacao = dataFundacaoEmpresa != null
@@ -66,7 +66,6 @@ class EmpresaRepositorio {
       ehFilial: ehFilial!,
       email: emailEmpresa!,
       enderecoEmpresa: enderecoEmpresa,
-      estadoId: estadoId,
       numeroFuncionarios: numeroFuncionariosEmpresa!,
       proprietario: proprietarioEmpresa!,
       ramoAtuacao: ramoAtuacaoEmpresa!,

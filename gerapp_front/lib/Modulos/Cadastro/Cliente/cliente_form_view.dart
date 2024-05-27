@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/show_message.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cliente/cliente_form_endereco.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cliente/cliente_form_principal.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Cliente/cliente_form_usuario.dart';
@@ -60,30 +61,46 @@ class _ClienteFormState extends State<ClienteForm> {
               ? 'Edite seu cliente!'
               : 'Cadastre seu cliente!',
           funcaoSalvar: () {
-            ClienteRepositorio()
-                .salvarEditar(
-                  widget.cliente != null ? 'PUT' : 'POST',
-                  _nomeCliente.text,
-                  _cpfCliente.text,
-                  _dataNascimento ?? DateTime.now(),
-                  _emailCliente.text,
-                  _telefoneCliente.text,
-                  _nomeMae.text,
-                  _statusCliente,
-                  _nomePai.text,
-                  _nomeConjugue.text,
-                  _imagemCliente.text,
-                  enderecosCliente,
-                  UsuarioModel(
-                    id: widget.cliente?.usuario!.id ?? 0,
-                    login: _loginUsuarioCliente.text,
-                    senha: _senhaUsuarioCliente.text,
-                    usuarioClienteId: widget.cliente?.id ?? 0,
-                  ),
-                  widget.cliente,
-                )
-                .then((value) => Navigator.pop(context));
-            ;
+            if (_nomeCliente.text.isEmpty) {
+              ShowMessage.show(
+                  context, 'Preencha o Nome do cliente para prosseguir!');
+            } else if (_emailCliente.text.isEmpty) {
+              ShowMessage.show(
+                  context, 'Preencha o e-mail do cliente para prosseguir!');
+            } else if (_loginUsuarioCliente.text.isEmpty) {
+              ShowMessage.show(
+                  context, 'Preencha o login do cliente para prosseguir!');
+            } else if (_senhaUsuarioCliente.text.isEmpty) {
+              ShowMessage.show(
+                  context, 'Preencha a senha do cliente para prosseguir!');
+            } else if (enderecosCliente.isEmpty) {
+              ShowMessage.show(context,
+                  'O cliente deve ter ao menos um endereço cadastrado!');
+            } else {
+              ClienteRepositorio()
+                  .salvarEditar(
+                    widget.cliente != null ? 'PUT' : 'POST',
+                    _nomeCliente.text,
+                    _cpfCliente.text,
+                    _dataNascimento ?? DateTime.now(),
+                    _emailCliente.text,
+                    _telefoneCliente.text,
+                    _nomeMae.text,
+                    _statusCliente,
+                    _nomePai.text,
+                    _nomeConjugue.text,
+                    _imagemCliente.text,
+                    enderecosCliente,
+                    UsuarioModel(
+                      id: widget.cliente?.usuario!.id ?? 0,
+                      login: _loginUsuarioCliente.text,
+                      senha: _senhaUsuarioCliente.text,
+                      usuarioClienteId: widget.cliente?.id ?? 0,
+                    ),
+                    widget.cliente,
+                  )
+                  .then((value) => Navigator.pop(context));
+            }
           },
           icone: widget.cliente != null
               ? Icon(Icons.save_as, color: Cores.BRANCO)

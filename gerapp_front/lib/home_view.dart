@@ -8,6 +8,7 @@ import 'package:gerapp_front/Menu_view/cadastros_menu.dart';
 import 'package:gerapp_front/Menu_view/financeiro_menu.dart';
 import 'package:gerapp_front/Menu_view/locacao_menu.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_login_model.dart';
+import 'package:gerapp_front/Modulos/Cadastro/Funcionario/funcionario_model.dart';
 
 class PaginaPrincipal extends StatefulWidget {
   final FuncionarioLoginDto funcionario;
@@ -45,10 +46,22 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
           ),
           IconButton(
             icon: const Icon(
-              Icons.shopping_cart,
+              Icons.engineering,
               color: Cores.BRANCO,
             ),
-            tooltip: 'Vá para o carrinho de agendamento',
+            tooltip: 'Configurações',
+            onPressed: () {},
+            alignment: Alignment.centerRight,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.message,
+              color: Cores.BRANCO,
+            ),
+            tooltip: 'Mensagens',
             onPressed: () {},
             alignment: Alignment.centerRight,
           ),
@@ -90,11 +103,6 @@ class _paginaPrincipalState extends State<PaginaPrincipal> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Converse com um de nossos consultores!',
-        child: const Icon(Icons.mail), //share
       ),
     );
   }

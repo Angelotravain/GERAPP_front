@@ -63,6 +63,8 @@ class GenericHttp {
       dynamic jsonData = json.decode(response.body);
 
       return jsonData;
+    } else if (response.statusCode == 404) {
+      return null;
     } else {
       throw Exception('Falha ao buscar dados no servidor');
     }
