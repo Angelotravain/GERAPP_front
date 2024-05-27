@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../Helpers/LocalHttp.dart';
@@ -39,7 +38,6 @@ class EmpresaRepositorio {
     String nome,
     String? logoEmpresa,
     String? cnpjEmpresa,
-    DateTime? dataFundacaoEmpresa,
     bool? ehFilial,
     String? emailEmpresa,
     EnderecoModel enderecoEmpresa,
@@ -51,18 +49,11 @@ class EmpresaRepositorio {
     String? webSiteEmpresa,
     EmpresaModelNovo? empresa,
   ) async {
-    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss');
-    final String formattedDataFundacao = dataFundacaoEmpresa != null
-        ? formatter.format(dataFundacaoEmpresa)
-        : '';
-
     final empresaModel = EmpresaModelNovo(
       id: empresa != null ? empresa!.id : 0,
       nome: nome,
       logoEmpresa: logoEmpresa!,
       cnpj: cnpjEmpresa!,
-      dataCadastro: DateTime.now(),
-      dataFundacao: DateTime.parse(formattedDataFundacao),
       ehFilial: ehFilial!,
       email: emailEmpresa!,
       enderecoEmpresa: enderecoEmpresa,

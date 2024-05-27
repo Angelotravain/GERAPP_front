@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gerapp_front/Helpers/HttpGeneric.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_form_endereco.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_form_principal.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_model_novo.dart';
 import 'package:gerapp_front/Modulos/Cadastro/Empresa/empresa_repositorio.dart';
-import 'package:gerapp_front/Modulos/Cadastro/Endereco/endereco_model.dart';
 
 import '../../../Helpers/Controles/entrada/appbar_cadastros.dart';
 import '../../../Helpers/Cores/cores.dart';
+import '../../../Helpers/LocalHttp.dart';
 
 class EmpresaForm extends StatefulWidget {
   @override
@@ -36,7 +39,7 @@ class _empresaFormState extends State<EmpresaForm> {
   TextEditingController _logradouroempresa = TextEditingController();
   TextEditingController _numeroempresa = TextEditingController();
 
-  bool? _ehFilialEmpresa = false;
+  bool _ehFilialEmpresa = false;
 
   @override
   void initState() {
@@ -48,7 +51,7 @@ class _empresaFormState extends State<EmpresaForm> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBarCadastros(
           titulo: widget.empresa != null
@@ -57,46 +60,31 @@ class _empresaFormState extends State<EmpresaForm> {
           funcaoSalvar: () {
             EmpresaRepositorio()
                 .salvarEditar(
-                  widget.empresa != null ? 'PUT' : 'POST',
-                  _nomeEmpresa.text,
-                  _logoEmpresa.text,
-                  _cnpjEmpresa.text,
-                  DateTime.now(),
-                  _ehFilialEmpresa,
-                  _emailEmpresa.text,
-                  EnderecoModel(
-                    id: widget.empresa != null
-                        ? widget.empresa!.enderecoEmpresa!.id
-                        : 0,
-                    logradouro: _logradouroempresa.text,
-                    numero: _numeroempresa.text,
-                    complemento: _complemento.text,
-                    cep: _cepEmpresa.text,
-                    bairroId: _estadoIdEmpresa.text.isNotEmpty
-                        ? int.parse(_estadoIdEmpresa.text)
-                        : 0,
-                    empresaId: widget.empresa != null
-                        ? widget.empresa!.enderecoEmpresa!.id
-                        : 0,
-                    funcionarioId: 0,
-                    clienteId: 0,
-                  ),
-                  _estadoIdEmpresa.text.isNotEmpty
-                      ? int.parse(_estadoIdEmpresa.text)
-                      : 0,
-                  _numeroFuncionariosEmpresa.text.isNotEmpty
-                      ? int.parse(_numeroFuncionariosEmpresa.text)
-                      : 0,
-                  _proprietarioEmpresa.text.isNotEmpty
-                      ? _proprietarioEmpresa.text
-                      : null,
-                  _ramoAtuacaoEmpresa.text.isNotEmpty
-                      ? _ramoAtuacaoEmpresa.text
-                      : null,
-                  _telefoneEmpresa.text.isNotEmpty ? _telefoneEmpresa.text : '',
-                  _webSiteEmpresa.text.isNotEmpty ? _webSiteEmpresa.text : null,
-                  widget.empresa,
-                )
+                    widget.empresa != null ? 'PUT' : 'POST',
+                    _nomeEmpresa.text,
+                    _logoEmpresa.text,
+                    _cnpjEmpresa.text,
+                    _ehFilialEmpresa!,
+                    _emailEmpresa.text,
+                    EnderecoModel(
+                      id: widget.empresa != null
+                          ? widget.empresa!.enderecoEmpresa!.id
+                          : 0,
+                      logradouro: _logradouroempresa.text,
+                      cep: _cepEmpresa.text,
+                      complemento: _complemento.text,
+                      numero: _numeroempresa.text,
+                      bairroId: int.tryParse(_estadoIdEmpresa.text) ?? 0,
+                      empresaId:
+                          widget.empresa != null ? widget.empresa!.id : 0,
+                    ),
+                    int.parse(_estadoIdEmpresa.text),
+                    int.tryParse(_numeroFuncionariosEmpresa.text) ?? 0,
+                    _proprietarioEmpresa.text,
+                    _ramoAtuacaoEmpresa.text,
+                    _telefoneEmpresa.text,
+                    _webSiteEmpresa.text,
+                    widget.empresa)
                 .then((value) => Navigator.pop(context));
           },
           icone: widget.empresa != null
@@ -158,8 +146,6 @@ class _empresaFormState extends State<EmpresaForm> {
   void PreencherCampos(EmpresaModelNovo? empresa) {
     if (empresa != null) {
       _cnpjEmpresa.text = empresa.cnpj ?? '';
-      _dataFundacaoEmpresa =
-          empresa.dataFundacao != null ? empresa.dataFundacao!.toString() : '';
       _ehFilialEmpresa = empresa.ehFilial;
       _nomeEmpresa.text = empresa.nome ?? '';
       _emailEmpresa.text = empresa.email ?? '';
@@ -178,6 +164,8 @@ class _empresaFormState extends State<EmpresaForm> {
             empresa.enderecoEmpresa!.bairroId?.toString() ?? '';
         _logradouroempresa.text = empresa.enderecoEmpresa!.logradouro ?? '';
         _numeroempresa.text = empresa.enderecoEmpresa!.numero ?? '';
+        _estadoIdEmpresa.text =
+            empresa.enderecoEmpresa!.bairroId.toString() ?? '';
       }
     }
   }

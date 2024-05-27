@@ -57,8 +57,6 @@ class _EmpresaPrincipalFormState extends State<EmpresaPrincipalForm> {
   TextEditingController? _numeroFuncionariosEmpresa;
   TextEditingController? _proprietarioEmpresa;
   TextEditingController? _logoEmpresa;
-  bool? _ehFilialEmpresa;
-  String? _dataFundacaoEmpresa;
 
   @override
   void initState() {
@@ -74,9 +72,6 @@ class _EmpresaPrincipalFormState extends State<EmpresaPrincipalForm> {
     _numeroFuncionariosEmpresa = widget.numeroFuncionariosEmpresa;
     _proprietarioEmpresa = widget.proprietarioEmpresa;
     _logoEmpresa = widget.logoEmpresa;
-    _ehFilialEmpresa = widget.ehFilialEmpresa;
-    _dataFundacaoEmpresa =
-        widget.dataFundacaoEmpresa ?? DateTime.now().toIso8601String();
   }
 
   Future<void> getImage() async {
@@ -88,22 +83,6 @@ class _EmpresaPrincipalFormState extends State<EmpresaPrincipalForm> {
     setState(() {
       _logoEmpresa?.text = base64Image;
     });
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked = (await showDatePicker(
-        context: context,
-        initialEntryMode: DatePickerEntryMode.input,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now(),
-        locale: Locale('pt', 'BR')))!;
-
-    if (picked != null) {
-      setState(() {
-        _dataFundacaoEmpresa = picked.toIso8601String() ?? '';
-      });
-    }
   }
 
   @override
@@ -146,19 +125,13 @@ class _EmpresaPrincipalFormState extends State<EmpresaPrincipalForm> {
                 controller: _proprietarioEmpresa!, label: 'Proprietário'),
             ToogleSelecao(
               label: 'Empresa é uma filial?',
-              value: _ehFilialEmpresa!,
+              value: widget.ehFilialEmpresa!,
               onChanged: (value) {
                 setState(() {
-                  _ehFilialEmpresa = value;
+                  widget.ehFilialEmpresa = value;
                 });
               },
-            ),
-            ElevatedButton(
-              onPressed: () => _selectDate(context),
-              child: Text('Selecionar Data de fundação'),
-            ),
-            if (_dataFundacaoEmpresa != null)
-              Text('Data de Fundação: ${_dataFundacaoEmpresa}'),
+            )
           ],
         ),
       ),
