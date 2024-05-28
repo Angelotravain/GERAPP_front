@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gerapp_front/Helpers/Controles/Campos/text_field.dart';
 import 'package:gerapp_front/Helpers/Controles/entrada/campo_toogle.dart';
+import 'package:gerapp_front/Helpers/Controles/entrada/show_message.dart';
 import 'package:gerapp_front/Helpers/Cores/cores.dart';
 import 'package:gerapp_front/Modulos/Cadastro/formaDePagamento/forma_pagamento_model.dart';
 
@@ -36,32 +37,40 @@ class _formaPagamentoPrincipalFormState extends State<FormaPagamentoForm> {
     return Scaffold(
         appBar: AppBarCadastros(
           titulo: widget.formaPagamento != null
-              ? 'Edite seu formaPagamento!'
-              : 'Cadastre seu formaPagamento!',
+              ? 'Edite sua forma de pagamento!'
+              : 'Cadastre sua forma de pagamento!',
           funcaoSalvar: () {
-            widget.formaPagamento != null
-                ? GenericHttp().Editar(
-                    widget.formaPagamento!.id,
-                    jsonEncode(
-                      FormaPagamentoModel(
-                          id: 0,
-                          descricao: _descricao.text,
-                          ehAvista: _ehAvista,
-                          ehCredito: _ehCredito,
-                          ehDebito: _ehDebito,
-                          ehPrazo: _ehAprazo),
-                    ),
-                    Local.URL_FORMA_PAGAMENTO_EDITAR)
-                : GenericHttp().Salvar(
-                    jsonEncode(FormaPagamentoModel(
-                        id: 0,
-                        descricao: _descricao.text,
-                        ehAvista: _ehAvista,
-                        ehCredito: _ehCredito,
-                        ehDebito: _ehDebito,
-                        ehPrazo: _ehAprazo)),
-                    Local.URL_FORMA_PAGAMENTO_SALVAR);
-            Navigator.pop(context);
+            if (_descricao.text == '') {
+              ShowMessage.show(context,
+                  'Coloque a descrição da forma de pagamento para seguir!');
+            } else {
+              widget.formaPagamento != null
+                  ? GenericHttp()
+                      .Editar(
+                          widget.formaPagamento!.id,
+                          jsonEncode(
+                            FormaPagamentoModel(
+                                id: 0,
+                                descricao: _descricao.text,
+                                ehAvista: _ehAvista,
+                                ehCredito: _ehCredito,
+                                ehDebito: _ehDebito,
+                                ehPrazo: _ehAprazo),
+                          ),
+                          Local.URL_FORMA_PAGAMENTO_EDITAR)
+                      .then((value) => Navigator.pop(context))
+                  : GenericHttp()
+                      .Salvar(
+                          jsonEncode(FormaPagamentoModel(
+                              id: 0,
+                              descricao: _descricao.text,
+                              ehAvista: _ehAvista,
+                              ehCredito: _ehCredito,
+                              ehDebito: _ehDebito,
+                              ehPrazo: _ehAprazo)),
+                          Local.URL_FORMA_PAGAMENTO_SALVAR)
+                      .then((value) => Navigator.pop(context));
+            }
           },
           tipoApp: widget.formaPagamento != null ? 'E' : 'I',
           icone: widget.formaPagamento != null

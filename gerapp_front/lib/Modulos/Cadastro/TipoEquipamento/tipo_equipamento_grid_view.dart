@@ -52,7 +52,7 @@ class _tipoEquipamentoGridState extends State<TipoEquipamentoGrid> {
         apiUrl: Local.URL_TIPO_EQUIPAMENTO_LISTA,
         controller: _pesquisa,
         deleteFunction: (p0) {
-          TipoEquipamentoRepositorio().deleteTipoEquipamento(int.parse(p0));
+          TipoEquipamentoRepositorio().deleteTipoEquipamento(p0);
         },
         subtitle: 'modelo',
         title: 'descricao',

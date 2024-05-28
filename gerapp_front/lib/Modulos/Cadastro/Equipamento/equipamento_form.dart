@@ -140,7 +140,9 @@ class _equipamentoPrincipalFormState extends State<EquipamentoForm> {
                   label: 'Está disponível?',
                   value: _estaDisponivel!,
                   onChanged: (value) {
-                    _estaDisponivel = value;
+                    setState(() {
+                      _estaDisponivel = value;
+                    });
                   }),
               ComboPesquisavel(
                   apiUrl: Local.URL_TIPO_EQUIPAMENTO_LISTA,

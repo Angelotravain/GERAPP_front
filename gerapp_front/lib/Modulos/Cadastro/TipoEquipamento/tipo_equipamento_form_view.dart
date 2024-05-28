@@ -48,27 +48,31 @@ class _tipoequipamentoFormState extends State<TipoEquipamentoForm> {
               : 'Cadastre seu veículo!',
           funcaoSalvar: () {
             widget.tipoEquipamento != null
-                ? GenericHttp().Editar(
-                    widget.tipoEquipamento!.id,
-                    jsonEncode(TipoEquipamentoModel(
-                        id: widget.tipoEquipamento!.id,
-                        descricao: _descricao.text,
-                        modelo: _modelo.text,
-                        tempoEntreManutencao: _tempoEntreManutencao.text != ''
-                            ? int.parse(_tempoEntreManutencao.text)
-                            : 0)),
-                    Local.EDITAR_TIPO_EQUIPAMENTO)
-                : GenericHttp().Salvar(
-                    jsonEncode(TipoEquipamentoModel(
-                        id: 0,
-                        descricao: _descricao.text,
-                        modelo: _modelo.text,
-                        tempoEntreManutencao: _tempoEntreManutencao.text != ''
-                            ? int.parse(_tempoEntreManutencao.text)
-                            : 0)),
-                    Local.SALVAR_TIPO_EQUIPAMENTO);
-
-            Navigator.pop(context);
+                ? GenericHttp()
+                    .Editar(
+                        widget.tipoEquipamento!.id,
+                        jsonEncode(TipoEquipamentoModel(
+                            id: widget.tipoEquipamento!.id,
+                            descricao: _descricao.text,
+                            modelo: _modelo.text,
+                            tempoEntreManutencao:
+                                _tempoEntreManutencao.text != ''
+                                    ? int.parse(_tempoEntreManutencao.text)
+                                    : 0)),
+                        Local.EDITAR_TIPO_EQUIPAMENTO)
+                    .then((value) => Navigator.pop(context))
+                : GenericHttp()
+                    .Salvar(
+                        jsonEncode(TipoEquipamentoModel(
+                            id: 0,
+                            descricao: _descricao.text,
+                            modelo: _modelo.text,
+                            tempoEntreManutencao:
+                                _tempoEntreManutencao.text != ''
+                                    ? int.parse(_tempoEntreManutencao.text)
+                                    : 0)),
+                        Local.SALVAR_TIPO_EQUIPAMENTO)
+                    .then((value) => Navigator.pop(context));
           },
           icone: widget.tipoEquipamento != null
               ? Icon(Icons.save_as, color: Cores.BRANCO)
