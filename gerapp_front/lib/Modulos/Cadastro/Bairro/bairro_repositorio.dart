@@ -9,8 +9,7 @@ ValueItem cidadeSelecionada = ValueItem(label: '', value: 0);
 
 class BairroRepositorio {
   Future<List<BairroModel>> GetAllBairros() async {
-    final response = await http
-        .get(Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ListarBairros'));
+    final response = await http.get(Uri.parse('${Local.URL_BAIRRO}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
@@ -24,8 +23,7 @@ class BairroRepositorio {
   }
 
   Future<String> deleteBairro(int id) async {
-    final response = await http.delete(
-        Uri.parse('${Local.localName}/api/Gerapp/Cadastro/ExcluirBairro/$id'));
+    final response = await http.delete(Uri.parse('${Local.URL_BAIRRO}$id'));
 
     if (response.statusCode == 200) {
       return response.body;
@@ -39,7 +37,7 @@ class BairroRepositorio {
     cidadeSelecionada = first;
   }
 
-  static String baseUrl = '${Local.localName}/api/Gerapp/Cadastro/';
+  static String baseUrl = Local.URL_BAIRRO;
   Future<void> salvarEditar(
     String tipo,
     String nome,
@@ -56,8 +54,7 @@ class BairroRepositorio {
         isentaFrete: isentarFrete,
         cidadeId: cidadeId);
 
-    final url = Uri.parse(
-        '$baseUrl${tipo == 'PUT' ? 'AtualizarBairro/${bairro?.id}' : 'SalvarBairro'}');
+    final url = Uri.parse('$baseUrl${tipo == 'PUT' ? '${bairro?.id}' : ''}');
 
     try {
       print(bairroModel.toJson());

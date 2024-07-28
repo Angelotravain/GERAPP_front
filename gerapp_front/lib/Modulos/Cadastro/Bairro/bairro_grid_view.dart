@@ -49,7 +49,7 @@ class _BairroGridState extends State<BairroGrid> {
         controller: _pesquisa,
       ),
       body: MontaLista(
-        apiUrl: '${Local.localName}/api/Gerapp/Cadastro/ListarBairros',
+        apiUrl: Local.URL_BAIRRO,
         controller: _pesquisa,
         deleteFunction: (p0) {
           BairroRepositorio().deleteBairro(p0);
@@ -64,7 +64,7 @@ class _BairroGridState extends State<BairroGrid> {
                       validarFrete: false,
                       bairro: BairroModel.fromMap(p0)))).then((value) {
             setState(() {
-              _pesquisa.text = '';
+              _pesquisa.clear();
             });
           });
         },
